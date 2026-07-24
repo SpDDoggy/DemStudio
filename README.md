@@ -7,7 +7,7 @@
 
 DEM Studio 是一款本地优先的桌面地形可视化与 DEM 渲染工具。它使用 Tauri 2 承载同一套 Three.js 前端，目标是在 Windows、macOS 和 Linux 上提供一致的地形查看、调节与导出体验。
 
-当前版本源自 Lens 内置 DEM Studio 的独立产品化迁移。迁移保留了已有 DEM 解析和渲染语义，并将文件访问、设置存储和系统对话框替换为跨平台 Tauri 能力。Three.js 与 GeoTIFF 解码器均进入本地构建产物，核心流程不依赖 CDN。
+当前版本源自 Lens 内置 DEM Studio 的独立产品化迁移。DEM 解析、NoData、统计、网格抽样和平滑已经进入独立 Rust Core，Three.js 保留实时地形渲染职责；文件访问、设置存储、系统对话框和无边框窗口由 Tauri 提供。核心流程不依赖 CDN。
 
 ## 功能
 
@@ -17,6 +17,7 @@ DEM Studio 是一款本地优先的桌面地形可视化与 DEM 渲染工具。�
 - 导出 PNG、PNG + World File、GeoTIFF、TIFF + World File
 - 本地保存应用设置、自定义预设和最近文件记录
 - 将渲染与文件处理保留在本机，不依赖云端服务
+- Windows 11 Fluent 无边框工作区与系统窗口控制
 
 ## 平台状态
 
@@ -66,8 +67,9 @@ npm run verify:runtime:windows
 ```text
 .
 ├─ index.html               # DEM Studio 前端与现有渲染逻辑
-├─ src/host-bridge.js       # Web 前端与 Tauri 宿主的兼容桥
-├─ src-tauri/               # Rust 宿主、权限与打包配置
+├─ src/host-bridge.js       # Web 前端与 Tauri/Rust Core 的桥接
+├─ src-tauri/dem-core/      # 独立 Rust DEM 核心
+├─ src-tauri/               # Tauri 宿主、权限与打包配置
 ├─ scripts/                 # 基线检查、运行时冒烟与状态迁移
 ├─ tests/fixtures/          # 可重复的测试样本
 └─ docs/                    # 架构决策、迁移契约与发布证据
@@ -86,7 +88,7 @@ npm run migrate:lens -- "路径/到/db.json"
 ## 当前路线
 
 - 用真实 GeoTIFF、HGT 和图像高度图建立跨平台金样回归
-- 拆分当前单文件前端，逐步形成解析、场景、设置和导出模块
+- 拆分当前单文件前端，逐步形成场景、设置和导出工作流模块
 - 收紧内容安全策略与宿主权限
 - 完成 Windows 签名、macOS 签名与公证，以及正式更新链路
 - 在真实 macOS/Linux 环境完成运行时和导出验收
@@ -97,6 +99,8 @@ npm run migrate:lens -- "路径/到/db.json"
 - [三端发布矩阵](docs/product/release-matrix.md)
 - [Windows 验证记录](docs/product/windows-validation.md)
 - [Tauri 三端架构决策](docs/adr/0001-tauri-cross-platform-host.md)
+- [Rust Core 与 Fluent 桌面壳决策](docs/adr/0002-rust-dem-core-and-fluent-shell.md)
+- [Fluent 设计系统](docs/design/brand-spec.md)
 
 ## 许可证
 

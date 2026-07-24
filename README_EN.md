@@ -7,7 +7,7 @@
 
 DEM Studio is a local-first desktop application for terrain visualization and DEM rendering. It uses Tauri 2 to host a shared Three.js frontend and aims to provide a consistent terrain viewing, adjustment, and export workflow across Windows, macOS, and Linux.
 
-This version is the standalone product migration of the DEM Studio previously embedded in Lens. The migration preserves the existing DEM parsing and rendering semantics while replacing file access, settings storage, and system dialogs with cross-platform Tauri capabilities. Three.js and the GeoTIFF decoder are bundled locally, so the core workflow does not depend on a CDN.
+This version is the standalone product migration of the DEM Studio previously embedded in Lens. DEM parsing, NoData handling, statistics, terrain sampling, and smoothing now live in an independent Rust Core, while Three.js remains responsible for real-time terrain rendering. Tauri provides file access, settings storage, system dialogs, and the frameless window shell. The core workflow does not depend on a CDN.
 
 ## Features
 
@@ -17,6 +17,7 @@ This version is the standalone product migration of the DEM Studio previously em
 - Export PNG, PNG + World File, GeoTIFF, and TIFF + World File
 - Persist application settings, custom presets, and recent-file history locally
 - Keep rendering and file processing on the local machine without a cloud dependency
+- Use a Windows 11 Fluent frameless workspace with system window controls
 
 ## Platform Status
 
@@ -66,8 +67,9 @@ Desktop packages must be built on their target operating system. A successful Wi
 ```text
 .
 ├─ index.html               # DEM Studio frontend and current rendering logic
-├─ src/host-bridge.js       # Compatibility bridge between the web UI and Tauri
-├─ src-tauri/               # Rust host, permissions, and packaging configuration
+├─ src/host-bridge.js       # Bridge between the web UI, Tauri, and Rust Core
+├─ src-tauri/dem-core/      # Independent Rust DEM core
+├─ src-tauri/               # Tauri host, permissions, and packaging configuration
 ├─ scripts/                 # Baseline checks, runtime smoke test, and state migration
 ├─ tests/fixtures/          # Reproducible test fixtures
 └─ docs/                    # Architecture decisions, migration contract, and release evidence
@@ -86,7 +88,7 @@ The script migrates application state such as settings, presets, and recent file
 ## Current Roadmap
 
 - Establish cross-platform golden regressions with real GeoTIFF, HGT, and image heightmaps
-- Split the current single-file frontend into parsing, scene, settings, and export modules
+- Split the current single-file frontend into scene, settings, and export workflow modules
 - Tighten the content security policy and host permissions
 - Complete Windows signing, macOS signing and notarization, and the production update path
 - Complete runtime and export acceptance on real macOS and Linux environments
@@ -97,6 +99,8 @@ The script migrates application state such as settings, presets, and recent file
 - [Cross-platform release matrix](docs/product/release-matrix.md)
 - [Windows validation record](docs/product/windows-validation.md)
 - [Tauri cross-platform architecture decision](docs/adr/0001-tauri-cross-platform-host.md)
+- [Rust Core and Fluent desktop shell decision](docs/adr/0002-rust-dem-core-and-fluent-shell.md)
+- [Fluent design system](docs/design/brand-spec.md)
 
 ## License
 

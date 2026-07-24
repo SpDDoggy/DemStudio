@@ -9,7 +9,12 @@ const checks = [
   ["GeoTIFF stays local", html.includes('import("geotiff")')],
   ["CDN import map is removed", !html.includes("https://unpkg.com/three") && !html.includes("https://cdn.jsdelivr.net/npm/geotiff")],
   ["settings compatibility exists", bridge.includes("dem-studio.json") && bridge.includes("pluginId, key")],
-  ["binary export bridge exists", bridge.includes("writeBlob")]
+  ["binary export bridge exists", bridge.includes("writeBlob")],
+  ["Rust DEM Core is wired", bridge.includes('invoke("parse_dem"') && html.includes('raw.engine === "rust-dem-core"')],
+  ["Rust terrain sampling is wired", bridge.includes('invoke("sample_dem"') && html.includes("coreApi.sampleDem")],
+  ["Rust GeoTIFF export is wired", bridge.includes('invoke("encode_geotiff"') && html.includes("coreApi.encodeGeoTiff")],
+  ["Fluent frameless shell exists", html.includes('class="titlebar"') && html.includes('id="windowClose"')],
+  ["product UI contains no emoji terrain icon", !html.includes("⛰️")]
 ];
 
 const failed = checks.filter(([, passed]) => !passed);

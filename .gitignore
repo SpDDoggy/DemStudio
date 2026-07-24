@@ -2,6 +2,8 @@ node_modules/
 dist/
 src-tauri/target/
 src-tauri/gen/
+src-tauri/dem-core/target/
+src-tauri/dem-core/Cargo.lock
 *.log
 .DS_Store
 Thumbs.db

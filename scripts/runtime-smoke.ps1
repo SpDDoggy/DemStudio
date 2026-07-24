@@ -95,8 +95,13 @@ try {
 JSON.stringify({
   title: document.title,
   hostRuntime: window.demStudioHost?.runtime ?? null,
+  hostCore: window.demStudioHost?.core ?? null,
   lensDbLoad: typeof window.lens?.db?.load,
   lensFsWriteBlob: typeof window.lens?.fs?.writeBlob,
+  coreSample: typeof window.lens?.core?.sampleDem,
+  coreExport: typeof window.lens?.core?.encodeGeoTiff,
+  windowMinimize: typeof window.lens?.window?.minimize,
+  titlebarHeight: Math.round(document.getElementById("titlebar")?.getBoundingClientRect().height ?? 0),
   canvasCount: document.querySelectorAll("canvas").length,
   status: document.getElementById("importStatus")?.textContent ?? null,
   bootError: document.getElementById("importStatus")?.classList.contains("err") ?? false
@@ -117,8 +122,13 @@ JSON.stringify({
 
     if ($state.title -ne "DEM Studio" -or
         $state.hostRuntime -ne "tauri" -or
+        $state.hostCore -ne "rust-dem-core" -or
         $state.lensDbLoad -ne "function" -or
         $state.lensFsWriteBlob -ne "function" -or
+        $state.coreSample -ne "function" -or
+        $state.coreExport -ne "function" -or
+        $state.windowMinimize -ne "function" -or
+        $state.titlebarHeight -ne 32 -or
         $state.canvasCount -lt 1 -or
         $state.bootError) {
         throw "Runtime smoke assertions failed."
@@ -160,6 +170,45 @@ JSON.stringify({
         $importState.type -ne "ASCII Grid" -or
         $importState.size -notmatch "^4\s+\D\s+4$") {
         throw "ASC import smoke assertions failed."
+    }
+
+    $exportResult = Invoke-Cdp -Socket $socket -Id 55 -Method "Runtime.evaluate" -Params @{
+        expression = @'
+(async () => {
+  const bytes = await window.lens.core.encodeGeoTiff(
+    2,
+    2,
+    new Uint8Array([
+      10, 20, 30, 255, 40, 50, 60, 255,
+      70, 80, 90, 255, 100, 110, 120, 0
+    ]),
+    {
+      geoTransform: [100, 5, 0, 200, 0, -5],
+      sourceGeoTiffTags: {
+        geoKeyDirectory: [1, 1, 0, 2, 1024, 0, 1, 2, 1025, 0, 1, 1]
+      }
+    },
+    true
+  );
+  return JSON.stringify({
+    byteLength: bytes.length,
+    littleEndian: bytes[0] === 0x49 && bytes[1] === 0x49,
+    tiffMagic: bytes[2] === 42 && bytes[3] === 0
+  });
+})()
+'@
+        awaitPromise = $true
+        returnByValue = $true
+    }
+    if ($exportResult.result.exceptionDetails) {
+        throw ($exportResult.result.exceptionDetails.text)
+    }
+    $exportState = $exportResult.result.result.value | ConvertFrom-Json
+    $exportState | ConvertTo-Json -Compress
+    if ($exportState.byteLength -lt 100 -or
+        -not $exportState.littleEndian -or
+        -not $exportState.tiffMagic) {
+        throw "Rust GeoTIFF export smoke assertions failed."
     }
 
     $capture = Invoke-Cdp -Socket $socket -Id 60 -Method "Page.captureScreenshot" -Params @{
