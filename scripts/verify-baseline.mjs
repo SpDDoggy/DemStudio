@@ -17,6 +17,7 @@ const checks = [
   ["Rust terrain sampling is wired", bridge.includes('invoke("sample_dem"') && html.includes("coreApi.sampleDem")],
   ["Rust GeoTIFF export is wired", bridge.includes('invoke("encode_geotiff"') && html.includes("coreApi.encodeGeoTiff")],
   ["Fluent frameless shell exists", html.includes('class="titlebar"') && html.includes('id="windowClose"')],
+  ["reference workspace composition exists", html.includes('class="viewport-expand"') && html.includes("viewport-focused")],
   [
     "Linux AppImage square icon is declared",
     Array.isArray(tauriConfig.bundle?.icon)

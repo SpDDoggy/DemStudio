@@ -29,7 +29,7 @@ Web 层继续负责：
 - GPU 晕渲与像素生成；
 - 控件状态和用户工作流。
 
-窗口改为 Tauri 无边框窗口，前端提供 32 px 可拖拽标题栏和真实窗口命令。视觉系统采用 Windows 11 Fluent 的层级、几何、字体、颜色与动效规则，设计令牌记录在 `docs/design/brand-spec.md`。
+窗口改为 Tauri 无边框窗口，前端提供 52 px 可拖拽标题栏和真实窗口命令。视觉系统采用 Windows 11 Fluent 的层级、几何、字体、颜色与动效规则，设计令牌记录在 `docs/design/brand-spec.md`。
 
 ## API 边界
 

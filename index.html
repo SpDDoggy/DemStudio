@@ -1794,6 +1794,592 @@
       }
     }
 
+    /* Reference-aligned light authoring workspace */
+    :root {
+      --workspace-bg: #edf3f9;
+      --workspace-surface: rgba(255, 255, 255, .88);
+      --workspace-surface-solid: #fbfdff;
+      --workspace-stroke: #dfe7f0;
+      --workspace-stroke-strong: #cbd8e7;
+      --workspace-blue: #0f6cda;
+      --workspace-blue-hover: #115ea3;
+      --workspace-text: #172033;
+      --workspace-muted: #69758a;
+      --workspace-shadow: 0 8px 24px rgba(41, 62, 89, .055);
+    }
+
+    html,
+    body {
+      background: var(--workspace-bg);
+    }
+
+    body {
+      overflow: hidden;
+      border: 1px solid rgba(15, 108, 218, .58);
+      border-radius: 12px;
+      color: var(--workspace-text);
+      background:
+        radial-gradient(circle at 12% -8%, rgba(15, 108, 218, .10), transparent 28%),
+        linear-gradient(180deg, #f8fbff 0, var(--workspace-bg) 150px);
+    }
+
+    .app {
+      grid-template-rows: 52px 48px minmax(0, 1fr);
+      background: transparent;
+    }
+
+    .titlebar {
+      height: 52px;
+      grid-template-columns: minmax(180px, 1fr) auto;
+      border-bottom: 0;
+      background: rgba(247, 250, 254, .72);
+      backdrop-filter: blur(24px) saturate(130%);
+    }
+
+    .titlebar-brand {
+      padding: 0 20px;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: -.01em;
+    }
+
+    .titlebar-brand img {
+      width: 20px;
+      height: 20px;
+    }
+
+    .titlebar-context {
+      display: none;
+    }
+
+    .window-controls {
+      grid-column: 2;
+      height: 51px;
+    }
+
+    .caption-button {
+      width: 48px;
+      height: 51px;
+      color: #344054;
+      font-size: 13px;
+    }
+
+    .topbar {
+      height: 40px;
+      min-height: 40px;
+      margin: 0 10px 8px;
+      padding: 4px 6px 4px 12px;
+      border: 1px solid rgba(255, 255, 255, .84);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .74);
+      box-shadow: 0 3px 12px rgba(53, 78, 110, .045);
+    }
+
+    .command-context {
+      gap: 12px;
+      overflow: hidden;
+      color: var(--workspace-muted);
+    }
+
+    .command-context strong {
+      color: var(--workspace-text);
+      font-size: 12px;
+    }
+
+    .command-context strong::after {
+      content: "›";
+      margin-left: 12px;
+      color: #a5afbd;
+      font-weight: 400;
+    }
+
+    #subtitle {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .actions {
+      flex: 0 0 auto;
+      gap: 5px;
+    }
+
+    .actions .btn {
+      height: 30px;
+      padding-inline: 13px;
+    }
+
+    .body,
+    .body.sidebar-collapsed {
+      grid-template-columns: 260px minmax(420px, 1fr) 330px;
+      gap: 7px;
+      padding: 0 10px 10px;
+      background: transparent;
+    }
+
+    .body.sidebar-collapsed {
+      grid-template-columns: 42px minmax(420px, 1fr) 330px;
+    }
+
+    .sidebar,
+    .inspector,
+    .viewport-wrap {
+      margin: 0;
+      border: 1px solid rgba(223, 231, 240, .92);
+      border-radius: 10px;
+      background: var(--workspace-surface);
+      box-shadow: var(--workspace-shadow);
+      backdrop-filter: blur(26px) saturate(120%);
+    }
+
+    .sidebar,
+    .inspector {
+      padding: 8px 12px;
+    }
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar .card {
+      flex: 0 0 auto;
+      padding: 10px 2px 12px;
+    }
+
+    .sidebar .card:last-of-type {
+      flex: 1 0 auto;
+    }
+
+    .sidebar-toggle {
+      position: absolute;
+      z-index: 5;
+      top: 8px;
+      right: 8px;
+      width: 26px;
+      margin: 0;
+      border: 1px solid transparent;
+    }
+
+    .sidebar-toggle:hover {
+      border-color: var(--workspace-stroke);
+      background: #fff;
+    }
+
+    .card + .card,
+    .section + .section {
+      border-top-color: var(--workspace-stroke);
+    }
+
+    .card h2,
+    .section-title {
+      color: var(--workspace-text);
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .dropzone {
+      min-height: 100px;
+      padding: 14px 10px;
+      border-color: rgba(15, 108, 218, .34);
+      border-radius: 8px;
+      background: rgba(248, 251, 255, .82);
+    }
+
+    .dropzone:hover,
+    .dropzone.drag {
+      border-color: var(--workspace-blue);
+      background: rgba(15, 108, 218, .055);
+    }
+
+    .dropzone > div {
+      display: grid;
+      justify-items: center;
+      gap: 3px;
+    }
+
+    .drop-icon {
+      width: 34px;
+      height: 34px;
+      margin: 0 0 3px;
+      border: 0;
+      border-radius: 8px;
+      background: rgba(15, 108, 218, .075);
+    }
+
+    .drop-icon img {
+      width: 19px;
+      height: 19px;
+    }
+
+    .dropzone strong {
+      color: #20324c;
+      font-size: 12px;
+    }
+
+    .dropzone .drop-action-label {
+      display: block !important;
+      color: var(--workspace-muted);
+      font-size: 10px;
+    }
+
+    .statusline {
+      margin-top: 7px !important;
+      color: var(--workspace-muted);
+      line-height: 1.45;
+    }
+
+    .statusline.ok {
+      color: #16814c;
+    }
+
+    .statusline.error {
+      color: #b42318;
+    }
+
+    .recent-list {
+      gap: 7px;
+    }
+
+    .recent-item {
+      padding: 9px 8px;
+      border-color: var(--workspace-stroke);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, .72);
+      box-shadow: 0 1px 3px rgba(37, 58, 82, .035);
+    }
+
+    .recent-item:hover {
+      border-color: rgba(15, 108, 218, .26);
+      background: #fff;
+      transform: translateY(-1px);
+    }
+
+    .recent-icon {
+      border-radius: 6px;
+      color: var(--workspace-blue);
+      background: rgba(15, 108, 218, .075);
+    }
+
+    .recent-title {
+      color: #223049;
+      font-weight: 600;
+    }
+
+    .metric-grid {
+      gap: 3px;
+    }
+
+    .metric {
+      min-height: 25px;
+      padding: 4px 6px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, .54);
+    }
+
+    .metric span {
+      color: #7c879a;
+    }
+
+    .metric b {
+      color: #3e4b61;
+      font-weight: 500;
+    }
+
+    .viewport-wrap {
+      min-width: 0;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(107, 153, 204, .10) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(107, 153, 204, .10) 1px, transparent 1px),
+        #f4f8fc;
+      background-size: 48px 48px;
+      box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, .78),
+        0 8px 24px rgba(41, 62, 89, .05);
+    }
+
+    #viewport canvas {
+      border-radius: 9px;
+    }
+
+    .hud {
+      top: 12px;
+      left: 12px;
+      min-width: 164px;
+      display: grid;
+      gap: 5px;
+      padding: 11px 14px;
+      border: 1px solid rgba(255, 255, 255, .9);
+      border-radius: 12px;
+      color: var(--workspace-text);
+      background: rgba(255, 255, 255, .76);
+      box-shadow: 0 8px 24px rgba(47, 72, 103, .08);
+      backdrop-filter: blur(24px) saturate(130%);
+    }
+
+    .chip {
+      min-height: auto;
+      padding: 0;
+      color: #445066;
+      background: transparent;
+      font-size: 10px;
+      line-height: 1.55;
+    }
+
+    .chip:first-child {
+      color: var(--workspace-text);
+      font-weight: 650;
+    }
+
+    .compass {
+      top: 16px;
+      right: 16px;
+      transform: scale(.86);
+      transform-origin: top right;
+    }
+
+    .viewport-expand {
+      position: absolute;
+      z-index: 7;
+      top: 14px;
+      right: 14px;
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(223, 231, 240, .9);
+      border-radius: 7px;
+      color: #556176;
+      background: rgba(255, 255, 255, .76);
+      box-shadow: 0 3px 12px rgba(47, 72, 103, .07);
+      backdrop-filter: blur(18px);
+      font: 500 15px/1 "Segoe UI Symbol", "Segoe UI", sans-serif;
+      transition:
+        color 120ms var(--fluent-motion),
+        background-color 120ms var(--fluent-motion),
+        transform 120ms var(--fluent-motion);
+    }
+
+    .viewport-expand:hover,
+    .viewport-expand[aria-pressed="true"] {
+      color: var(--workspace-blue);
+      background: #fff;
+    }
+
+    .viewport-expand:active {
+      transform: scale(.96);
+    }
+
+    .viewport-expand ~ .compass {
+      top: 54px;
+    }
+
+    .body.viewport-focused {
+      grid-template-columns: 0 minmax(0, 1fr) 0;
+      gap: 0;
+    }
+
+    .body.viewport-focused .sidebar,
+    .body.viewport-focused .inspector {
+      visibility: hidden;
+      padding-inline: 0;
+      border-width: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .view-tools {
+      bottom: 14px;
+      gap: 5px;
+      padding: 7px 9px;
+      border: 1px solid rgba(255, 255, 255, .92);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, .78);
+      box-shadow: 0 8px 24px rgba(47, 72, 103, .10);
+      backdrop-filter: blur(26px) saturate(130%);
+    }
+
+    .toolbar-group {
+      gap: 4px;
+    }
+
+    .toolbar-group + .toolbar-group {
+      padding-left: 5px;
+      border-left: 1px solid var(--workspace-stroke);
+    }
+
+    .view-tools .btn,
+    .view-tools .round-btn {
+      height: 30px;
+      border-color: var(--workspace-stroke);
+      color: #344054;
+      background: rgba(255, 255, 255, .86);
+      box-shadow: none;
+    }
+
+    .view-tools .btn.active {
+      color: var(--workspace-blue);
+      border-color: rgba(15, 108, 218, .24);
+      background: rgba(15, 108, 218, .07);
+    }
+
+    .zoom-control {
+      min-height: 30px;
+      padding: 0 7px;
+      border: 0;
+      color: #5b6678;
+      background: rgba(236, 242, 248, .88);
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .zoom-control input[type="range"] {
+      width: 86px;
+    }
+
+    .inspector {
+      padding-top: 0;
+      background: rgba(255, 255, 255, .91);
+    }
+
+    .inspector-tabs {
+      position: sticky;
+      z-index: 4;
+      top: 0;
+      gap: 0;
+      padding: 0;
+      border-bottom: 1px solid var(--workspace-stroke);
+      background: rgba(255, 255, 255, .92);
+      backdrop-filter: blur(20px);
+    }
+
+    .tab-btn {
+      position: relative;
+      height: 46px;
+      padding: 0 9px;
+      border: 0;
+      border-radius: 0;
+      color: #667085;
+      background: transparent;
+      box-shadow: none;
+      font-size: 11px;
+    }
+
+    .tab-btn:hover {
+      color: var(--workspace-text);
+      background: rgba(15, 108, 218, .035);
+    }
+
+    .tab-btn.active {
+      color: var(--workspace-blue);
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .tab-btn.active::after {
+      content: "";
+      position: absolute;
+      right: 8px;
+      bottom: -1px;
+      left: 8px;
+      height: 2px;
+      border-radius: 2px 2px 0 0;
+      background: var(--workspace-blue);
+    }
+
+    .tab-panel {
+      padding: 0 2px 12px;
+    }
+
+    .section {
+      padding: 15px 0 14px;
+    }
+
+    .section-title {
+      margin-bottom: 11px;
+    }
+
+    .control {
+      margin-bottom: 11px;
+    }
+
+    .control label,
+    .toggle-row {
+      color: #344054;
+      font-size: 10.5px;
+    }
+
+    .control label .value {
+      color: #667085;
+      font-variant-numeric: tabular-nums;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+      height: 31px;
+      border-color: var(--workspace-stroke);
+      border-radius: 6px;
+      color: #344054;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 1px 2px rgba(31, 50, 73, .025);
+    }
+
+    input[type="range"] {
+      height: 16px;
+      accent-color: var(--workspace-blue);
+    }
+
+    .btn {
+      border-color: var(--workspace-stroke);
+      border-bottom-color: var(--workspace-stroke-strong);
+      border-radius: 6px;
+      color: #344054;
+      background: rgba(255, 255, 255, .92);
+      box-shadow: 0 1px 2px rgba(31, 50, 73, .045);
+    }
+
+    .btn:hover {
+      border-color: var(--workspace-stroke-strong);
+      background: #fff;
+    }
+
+    .btn.primary,
+    .btn.primary:hover {
+      background: var(--workspace-blue);
+    }
+
+    .btn.primary:hover {
+      background: var(--workspace-blue-hover);
+    }
+
+    .link-btn {
+      color: var(--workspace-muted);
+    }
+
+    .link-btn:hover {
+      color: var(--workspace-blue);
+    }
+
+    .empty-inner {
+      border-color: rgba(255, 255, 255, .94);
+      background: rgba(255, 255, 255, .82);
+      box-shadow: 0 16px 50px rgba(47, 72, 103, .12);
+    }
+
+    @media (max-width: 1360px) {
+      .body,
+      .body.sidebar-collapsed {
+        grid-template-columns: 238px minmax(380px, 1fr) 308px;
+      }
+
+      .body.sidebar-collapsed {
+        grid-template-columns: 42px minmax(380px, 1fr) 308px;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -1824,7 +2410,7 @@
     </header>
     <header class="topbar">
       <div class="command-context">
-        <strong>地形工作区</strong>
+        <strong>地图工作区</strong>
         <span id="subtitle">就绪</span>
       </div>
       <div class="actions">
@@ -1839,12 +2425,13 @@
       <aside class="sidebar" id="leftSidebar">
         <button class="sidebar-toggle" id="btnToggleSidebar" type="button" title="收起左侧边栏">‹</button>
         <section class="card">
-          <h2>文件与数据</h2>
+          <h2>文件与资源</h2>
           <div class="dropzone" id="dropzone">
             <input id="fileInput" type="file" multiple accept=".tif,.tiff,.hgt,.asc,.png,.jpg,.jpeg,.webp,.prj,.xml,.tfw,.tifw,.wld" />
             <div>
-              <div class="drop-icon">DEM</div>
-              <strong>拖放或选择文件</strong>
+              <div class="drop-icon"><img src="./assets/icon.svg" alt="" /></div>
+              <strong>DEM</strong>
+              <span class="drop-action-label">拖放或选择文件</span>
             </div>
           </div>
           <div class="statusline" id="importStatus" style="margin-top:10px;">等待导入文件。</div>
@@ -1874,6 +2461,7 @@
 
       <section class="viewport-wrap">
         <div id="viewport"></div>
+        <button class="viewport-expand" id="btnViewportExpand" type="button" aria-label="专注画布" title="专注画布">⛶</button>
 
         <div class="empty" id="emptyState">
           <div class="empty-inner">
@@ -2589,13 +3177,13 @@
       textureGamma: 1,
       textureHue: 0,
       wireframe: false,
-      showGrid: false,
+      showGrid: true,
       sunAzimuth: 135,
       sunElevation: 45,
       shadowIntensity: 1.05,
       ambientIntensity: 0.52,
       cameraMode: "perspective",
-      backgroundColor: "#a9b7c6",
+      backgroundColor: "#eef4fb",
       transparentExport: false,
       exportFormat: "png",
       exportScale: 2,
@@ -2660,7 +3248,7 @@
           sunElevation: 45,
           shadowIntensity: 1.05,
           ambientIntensity: 0.52,
-          backgroundColor: "#a9b7c6",
+          backgroundColor: "#eef4fb",
           lowColor: "#d8c8aa",
           highColor: "#f3eadb",
           textureMode: "grain",
@@ -2675,7 +3263,7 @@
           sharpenEnabled: true,
           sharpenStrength: 0.22,
           wireframe: false,
-          showGrid: false
+          showGrid: true
         }
       },
       white: {
@@ -3469,6 +4057,7 @@
       document.getElementById("btnDefaults")?.addEventListener("click", restoreDefaults);
       document.getElementById("btnEnhancedDefaults")?.addEventListener("click", restoreEnhancedDefaults);
       document.getElementById("btnClearRecent")?.addEventListener("click", clearRecentFiles);
+      document.getElementById("btnViewportExpand")?.addEventListener("click", toggleViewportFocus);
       el.sidebarToggle?.addEventListener("click", toggleSidebar);
       document.getElementById("zoomOut")?.addEventListener("click", () => setZoom((Number(el.zoomRange?.value || 100) - 10)));
       document.getElementById("zoomIn")?.addEventListener("click", () => setZoom((Number(el.zoomRange?.value || 100) + 10)));
@@ -4150,6 +4739,18 @@
       applySidebarCollapsed();
       debouncedSave();
       setTimeout(resizeRenderer, 260);
+    }
+
+    function toggleViewportFocus() {
+      const focused = !el.body?.classList.contains("viewport-focused");
+      el.body?.classList.toggle("viewport-focused", focused);
+      const button = document.getElementById("btnViewportExpand");
+      button?.setAttribute("aria-pressed", String(focused));
+      if (button) {
+        button.title = focused ? "退出专注画布" : "专注画布";
+        button.setAttribute("aria-label", button.title);
+      }
+      setTimeout(resizeRenderer, 220);
     }
 
     function applySidebarCollapsed() {

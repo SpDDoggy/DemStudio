@@ -17,14 +17,21 @@ The product mark is the existing DEM Studio terrain glyph. It must be used as an
 
 ## Fluent design system
 
-- Anchor: Windows 11 Fluent desktop workspace
-- Color: neutral Mica-like base, white elevated controls, Windows blue `#005fb8` for primary actions
+- Anchor: Windows 11 Fluent desktop workspace, aligned to the approved three-pane reference dated 2026-07-24
+- Color: cool white Mica-like base, pale blue-gray workspace, Windows blue `#0f6cda` for primary actions
 - Typography: `"Segoe UI Variable Text"`, `"Segoe UI Variable Display"`, with native CJK fallbacks
 - Spacing: 4 px base unit; primary intervals are 4, 8, 12, 16 and 24 px
-- Geometry: 4 px control radius, 8 px panel radius, 12 px dialog radius
+- Geometry: 6 px control radius, 10 px panel radius, 12 px floating controls and dialogs
 - Elevation: hairline borders plus two restrained shadow levels
 - Motion: 100–200 ms, `cubic-bezier(.1,.9,.2,1)`, with reduced-motion support
-- Window chrome: custom 32 px draggable title bar with native minimize, maximize/restore and close actions
+- Window chrome: custom 52 px draggable title bar with native minimize, maximize/restore and close actions
+
+## Workspace composition
+
+- Command bar: breadcrumb and current dataset status on the left, primary file/export actions on the right.
+- Resource rail: 260 px target width for import, recent files and live dataset metadata.
+- Terrain stage: flexible light canvas with grid, compact dataset HUD, orientation cube and bottom camera controls.
+- Inspector: 330 px target width with underline tabs and vertically grouped controls.
 
 ## Interaction rules
 

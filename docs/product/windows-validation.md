@@ -32,7 +32,7 @@
 - 运行时确认 `hostCore = rust-dem-core`。
 - 4 × 4 ASC 经 Rust 解析与抽样后完成 Three.js 渲染。
 - 运行时生成 439 字节测试 GeoTIFF，字节序和 TIFF 魔数正确。
-- 无边框标题栏高度为 32 px，系统窗口 API 可调用。
+- 无边框标题栏高度为 52 px，系统窗口 API 可调用。
 - Fluent 工作区通过 1440 × 900 截图检查。
 
 ## 构建产物
@@ -40,14 +40,14 @@
 ### 独立 EXE
 
 - 路径：`src-tauri/target/release/dem-studio.exe`
-- 大小：12,869,632 bytes
-- SHA-256：`B97D2E41EE3A055F9B9D54670C748AC7A42512A879E70E860487F11C81E8625A`
+- 大小：12,871,168 bytes
+- SHA-256：`52D5133B11E36B371488192CF0B8E4A0EF21BCC9B817FF3C050400564500DC61`
 
 ### NSIS 安装包
 
 - 路径：`src-tauri/target/release/bundle/nsis/DEM Studio_0.12.1_x64-setup.exe`
-- 大小：3,416,725 bytes
-- SHA-256：`9B075C9AF9520F215CAEF9C9B0C7BDF9E0D0803E5CB7AED80C295C8C22494828`
+- 大小：3,416,446 bytes
+- SHA-256：`F3545F177315575B13768A8FCE9CB9603E30153DA319F134CABE54417366734A`
 
 ## 尚未通过
 

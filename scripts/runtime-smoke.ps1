@@ -128,7 +128,7 @@ JSON.stringify({
         $state.coreSample -ne "function" -or
         $state.coreExport -ne "function" -or
         $state.windowMinimize -ne "function" -or
-        $state.titlebarHeight -ne 32 -or
+        $state.titlebarHeight -ne 52 -or
         $state.canvasCount -lt 1 -or
         $state.bootError) {
         throw "Runtime smoke assertions failed."
