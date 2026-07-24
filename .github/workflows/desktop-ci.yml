@@ -36,7 +36,7 @@ jobs:
             args: --target x86_64-unknown-linux-gnu --bundles appimage,deb
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Install Linux system dependencies
         if: matrix.platform == 'ubuntu-22.04'
@@ -51,9 +51,10 @@ jobs:
             libxdo-dev \
             libssl-dev \
             libayatana-appindicator3-dev \
-            librsvg2-dev
+            librsvg2-dev \
+            patchelf
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 20
           cache: npm
@@ -73,7 +74,7 @@ jobs:
         run: npm run verify
 
       - name: Build desktop bundle
-        uses: tauri-apps/tauri-action@v0
+        uses: tauri-apps/tauri-action@v1
         with:
           args: ${{ matrix.args }}
 
