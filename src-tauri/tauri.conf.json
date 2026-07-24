@@ -33,6 +33,13 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
     "category": "GraphicsAndDesign",
     "shortDescription": "Terrain visualization and DEM rendering studio",
     "longDescription": "DEM Studio imports elevation data, renders interactive terrain and exports georeferenced imagery."

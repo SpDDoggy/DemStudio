@@ -2,6 +2,9 @@ import { readFile } from "node:fs/promises";
 
 const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
 const bridge = await readFile(new URL("../src/host-bridge.js", import.meta.url), "utf8");
+const tauriConfig = JSON.parse(
+  await readFile(new URL("../src-tauri/tauri.conf.json", import.meta.url), "utf8")
+);
 
 const checks = [
   ["host bridge is imported", html.includes('import "./src/host-bridge.js";')],
@@ -14,6 +17,11 @@ const checks = [
   ["Rust terrain sampling is wired", bridge.includes('invoke("sample_dem"') && html.includes("coreApi.sampleDem")],
   ["Rust GeoTIFF export is wired", bridge.includes('invoke("encode_geotiff"') && html.includes("coreApi.encodeGeoTiff")],
   ["Fluent frameless shell exists", html.includes('class="titlebar"') && html.includes('id="windowClose"')],
+  [
+    "Linux AppImage square icon is declared",
+    Array.isArray(tauriConfig.bundle?.icon)
+      && tauriConfig.bundle.icon.some((icon) => /(?:^|\/)128x128(?:@2x)?\.png$/.test(icon))
+  ],
   ["product UI contains no emoji terrain icon", !html.includes("⛰️")]
 ];
 
