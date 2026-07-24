@@ -1,0 +1,23 @@
+{
+  "identifier": "studio.dem.desktop.smoke",
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "DEM Studio",
+        "width": 1440,
+        "height": 900,
+        "minWidth": 1180,
+        "minHeight": 720,
+        "center": true,
+        "resizable": true,
+        "fullscreen": false,
+        "dragDropEnabled": false,
+        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --remote-debugging-port=9333"
+      }
+    ]
+  },
+  "bundle": {
+    "active": false
+  }
+}
