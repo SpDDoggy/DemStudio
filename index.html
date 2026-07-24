@@ -2380,6 +2380,697 @@
       }
     }
 
+    /* Canvas-first floating workspace — approved 2026-07-24 direction */
+    :root {
+      --island-bg: rgba(255, 255, 255, .82);
+      --island-bg-strong: rgba(255, 255, 255, .92);
+      --island-stroke: rgba(255, 255, 255, .88);
+      --island-shadow:
+        0 18px 42px rgba(60, 79, 108, .12),
+        0 2px 8px rgba(60, 79, 108, .05);
+      --island-radius: 20px;
+    }
+
+    .app {
+      grid-template-rows: 0 0 minmax(0, 1fr);
+      background:
+        radial-gradient(circle at 10% 11%, rgba(255, 241, 220, .46), transparent 29%),
+        radial-gradient(circle at 78% 3%, rgba(211, 226, 255, .60), transparent 37%),
+        #eef4fb;
+    }
+
+    .titlebar {
+      position: absolute;
+      z-index: 30;
+      inset: 0 0 auto;
+      height: 52px;
+      display: block;
+      border: 0;
+      background: transparent;
+      pointer-events: none;
+    }
+
+    .titlebar-brand {
+      position: absolute;
+      top: 22px;
+      left: 24px;
+      width: 425px;
+      height: 76px;
+      display: grid;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 17px;
+      border: 1px solid var(--island-stroke);
+      border-radius: 16px;
+      background: var(--island-bg);
+      box-shadow: var(--island-shadow);
+      backdrop-filter: blur(30px) saturate(135%);
+      pointer-events: auto;
+    }
+
+    .titlebar-brand img {
+      width: 48px;
+      height: 48px;
+      filter: drop-shadow(0 8px 12px rgba(15, 108, 218, .16));
+    }
+
+    .brand-copy {
+      min-width: 0;
+      display: grid;
+      gap: 4px;
+    }
+
+    .brand-copy > span {
+      color: #172033;
+      font-size: 16px;
+      font-weight: 680;
+      letter-spacing: -.02em;
+    }
+
+    .brand-copy small {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow: hidden;
+      color: #718096;
+      font-size: 11px;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .brand-copy small span:first-child {
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .save-state {
+      color: #4f9b70;
+    }
+
+    .save-state::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      display: inline-block;
+      margin-left: 5px;
+      border-radius: 50%;
+      background: #55ad78;
+      box-shadow: 0 0 0 3px rgba(85, 173, 120, .10);
+    }
+
+    .titlebar-brand .btn {
+      height: 36px;
+      padding-inline: 14px;
+      border-radius: 9px;
+      white-space: nowrap;
+    }
+
+    .window-controls {
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      right: 0;
+      height: 42px;
+      display: flex;
+      pointer-events: auto;
+    }
+
+    .caption-button {
+      width: 48px;
+      height: 42px;
+      color: #24334a;
+    }
+
+    .topbar {
+      position: absolute;
+      z-index: 29;
+      top: 38px;
+      right: 82px;
+      width: auto;
+      height: 56px;
+      min-height: 56px;
+      margin: 0;
+      padding: 8px;
+      border: 1px solid var(--island-stroke);
+      border-radius: 15px;
+      background: var(--island-bg);
+      box-shadow: var(--island-shadow);
+      backdrop-filter: blur(30px) saturate(135%);
+    }
+
+    .command-context,
+    .actions #btnDemo {
+      display: none;
+    }
+
+    .actions {
+      gap: 8px;
+    }
+
+    .actions .btn {
+      height: 38px;
+      padding-inline: 17px;
+      border-radius: 9px;
+    }
+
+    .actions .btn::after,
+    .titlebar-brand .btn::after {
+      content: "⌄";
+      margin-left: 9px;
+      color: currentColor;
+      opacity: .72;
+      font-size: 11px;
+    }
+
+    .body,
+    .body.sidebar-collapsed {
+      position: relative;
+      grid-row: 3;
+      display: block;
+      min-width: 0;
+      min-height: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .viewport-wrap {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      margin: 0;
+      border: 0;
+      border-radius: 0;
+      background:
+        radial-gradient(circle at 52% 42%, rgba(255, 255, 255, .72), transparent 45%),
+        linear-gradient(rgba(112, 153, 205, .075) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(112, 153, 205, .075) 1px, transparent 1px),
+        transparent;
+      background-size: auto, 52px 52px, 52px 52px, auto;
+      box-shadow: none;
+    }
+
+    #viewport canvas {
+      border-radius: 0;
+    }
+
+    .sidebar,
+    .inspector {
+      position: absolute;
+      z-index: 8;
+      margin: 0;
+      border: 1px solid var(--island-stroke);
+      border-radius: var(--island-radius);
+      background: var(--island-bg);
+      box-shadow: var(--island-shadow);
+      backdrop-filter: blur(30px) saturate(135%);
+      transition:
+        opacity 180ms var(--fluent-motion),
+        transform 220ms var(--fluent-motion);
+    }
+
+    .sidebar {
+      top: 150px;
+      bottom: 232px;
+      left: 24px;
+      width: 292px;
+      min-height: 456px;
+      padding: 14px 18px 16px;
+      overflow: hidden auto;
+    }
+
+    .sidebar .card,
+    .sidebar .card:last-of-type {
+      flex: 0 0 auto;
+      padding: 0 0 16px;
+    }
+
+    .sidebar .card + .card {
+      padding-top: 2px;
+      border-top: 0;
+    }
+
+    .sidebar .card:last-of-type {
+      display: none;
+    }
+
+    .sidebar-toggle {
+      top: 10px;
+      right: 12px;
+      width: 28px;
+      height: 28px;
+      color: #5f6b7d;
+      background: transparent;
+    }
+
+    .sidebar h2,
+    .sidebar .section-title {
+      margin-bottom: 14px;
+      color: #1f293b;
+      font-size: 14px;
+      font-weight: 680;
+    }
+
+    .dropzone {
+      min-height: 48px;
+      padding: 0 12px;
+      border: 1px solid #e1e8f2;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .74);
+      box-shadow: 0 3px 10px rgba(43, 62, 90, .04);
+    }
+
+    .dropzone > div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .dropzone .drop-icon,
+    .dropzone strong {
+      display: none;
+    }
+
+    .dropzone .drop-action-label {
+      color: #40506a;
+      font-size: 11px;
+      font-weight: 580;
+    }
+
+    .dropzone .drop-action-label::before {
+      content: "+";
+      margin-right: 8px;
+      color: #50627e;
+      font-size: 18px;
+      font-weight: 400;
+      vertical-align: -1px;
+    }
+
+    .statusline {
+      min-height: 0;
+      max-height: 0;
+      margin: 0 !important;
+      overflow: hidden;
+      opacity: 0;
+    }
+
+    .current-scene {
+      margin-top: 3px;
+    }
+
+    .current-dataset {
+      min-height: 62px;
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 11px;
+      border: 1px solid rgba(74, 133, 255, .40);
+      border-radius: 11px;
+      background: rgba(236, 244, 255, .80);
+      box-shadow:
+        0 7px 18px rgba(41, 104, 224, .08),
+        inset 0 0 0 1px rgba(255, 255, 255, .65);
+    }
+
+    .current-dataset .recent-icon {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      color: #fff;
+      background: #3f82f8;
+    }
+
+    .current-dataset-copy {
+      min-width: 0;
+      display: grid;
+      gap: 3px;
+    }
+
+    .current-dataset-copy b {
+      overflow: hidden;
+      color: #1e2d45;
+      font-size: 11px;
+      font-weight: 680;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .current-dataset-copy span {
+      overflow: hidden;
+      color: #69809f;
+      font-size: 10px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .scene-menu {
+      width: 26px;
+      height: 26px;
+      border: 0;
+      border-radius: 7px;
+      color: var(--workspace-blue);
+      background: transparent;
+    }
+
+    .recent-list {
+      max-height: 238px;
+      gap: 8px;
+      overflow: hidden;
+    }
+
+    .recent-item {
+      min-height: 52px;
+      padding: 8px 10px;
+      border-color: #e4eaf2;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, .72);
+    }
+
+    .recent-item:nth-child(n+5) {
+      display: none;
+    }
+
+    .recent-title {
+      font-size: 10.5px;
+    }
+
+    .recent-meta {
+      margin-top: 3px;
+      overflow: hidden;
+      font-size: 9.5px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .recent-footer {
+      display: flex;
+      justify-content: center;
+      padding-top: 10px;
+    }
+
+    .inspector {
+      top: 116px;
+      right: 24px;
+      bottom: 72px;
+      width: 324px;
+      padding: 0 18px 18px;
+      overflow: hidden auto;
+      background: rgba(255, 255, 255, .86);
+    }
+
+    .inspector-heading {
+      position: sticky;
+      z-index: 6;
+      top: 0;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(rgba(255, 255, 255, .95), rgba(255, 255, 255, .88));
+      backdrop-filter: blur(24px);
+    }
+
+    .inspector-heading h2 {
+      color: #1f293b;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .panel-close {
+      width: 30px;
+      height: 30px;
+      border: 0;
+      border-radius: 8px;
+      color: #32415a;
+      background: transparent;
+      font-size: 18px;
+    }
+
+    .panel-close:hover {
+      background: rgba(45, 78, 118, .06);
+    }
+
+    .inspector-tabs {
+      position: sticky;
+      top: 52px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+      padding: 3px;
+      border: 1px solid #e4eaf2;
+      border-radius: 9px;
+      background: rgba(245, 248, 252, .92);
+    }
+
+    .tab-btn {
+      height: 28px;
+      padding: 0 4px;
+      border-radius: 6px;
+      font-size: 9.5px;
+    }
+
+    .tab-btn.active {
+      background: #fff;
+      box-shadow: 0 2px 7px rgba(46, 65, 92, .07);
+    }
+
+    .tab-btn.active::after {
+      display: none;
+    }
+
+    .tab-panel {
+      padding: 0 0 12px;
+    }
+
+    .section {
+      padding: 17px 0 14px;
+    }
+
+    .section + .section {
+      border-top-color: #e6ebf2;
+    }
+
+    .control {
+      margin-bottom: 13px;
+    }
+
+    .control label,
+    .toggle-row {
+      color: #34445d;
+      font-size: 10.5px;
+    }
+
+    select,
+    input[type="number"],
+    input[type="text"] {
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .82);
+    }
+
+    .hud {
+      top: 128px;
+      left: 342px;
+      min-width: 195px;
+      gap: 9px;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: var(--island-bg);
+      box-shadow: var(--island-shadow);
+    }
+
+    .chip {
+      position: relative;
+      padding-left: 25px;
+      color: #34445d;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .chip::before {
+      content: "";
+      position: absolute;
+      top: 5px;
+      left: 0;
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid #5e6d84;
+      border-radius: 3px;
+    }
+
+    .chip:nth-child(2)::before {
+      border-radius: 2px 2px 6px 6px;
+    }
+
+    .chip:nth-child(3)::before {
+      border-radius: 50%;
+    }
+
+    .compass {
+      top: 136px;
+      right: 382px;
+      transform: scale(.92);
+    }
+
+    .viewport-expand {
+      display: none;
+    }
+
+    .view-tools {
+      right: auto;
+      left: 50%;
+      bottom: 28px;
+      width: max-content;
+      max-width: calc(100% - 420px);
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 15px;
+      background: rgba(255, 255, 255, .84);
+      box-shadow: var(--island-shadow);
+      transform: translateX(-50%);
+    }
+
+    .view-tools .btn,
+    .view-tools .round-btn {
+      height: 34px;
+      border-color: transparent;
+      border-radius: 8px;
+      background: transparent;
+    }
+
+    .view-tools .btn:hover,
+    .view-tools .round-btn:hover {
+      background: rgba(58, 112, 219, .06);
+    }
+
+    .view-tools .btn.active {
+      border-color: rgba(64, 126, 255, .15);
+      background: rgba(231, 240, 255, .92);
+    }
+
+    .zoom-control {
+      min-height: 34px;
+      padding: 0 9px;
+      background: transparent;
+    }
+
+    .zoom-control input[type="range"] {
+      width: 96px;
+    }
+
+    .workspace-footer {
+      position: absolute;
+      z-index: 10;
+      right: 24px;
+      bottom: 24px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+
+    .runtime-pill,
+    .footer-actions {
+      display: flex;
+      align-items: center;
+      pointer-events: auto;
+    }
+
+    .runtime-pill {
+      gap: 13px;
+      height: 34px;
+      padding: 0 13px;
+      border: 1px solid var(--island-stroke);
+      border-radius: 12px;
+      color: #53627a;
+      background: rgba(255, 255, 255, .74);
+      box-shadow: 0 6px 18px rgba(57, 76, 104, .07);
+      backdrop-filter: blur(22px);
+      font-size: 10px;
+    }
+
+    .runtime-pill strong {
+      color: #499a6c;
+      font-weight: 650;
+    }
+
+    .runtime-pill strong::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      display: inline-block;
+      margin-right: 6px;
+      border-radius: 50%;
+      background: #58b77d;
+    }
+
+    .footer-actions {
+      gap: 8px;
+    }
+
+    .footer-action {
+      height: 34px;
+      padding: 0 11px;
+      border: 0;
+      border-radius: 9px;
+      color: #52627b;
+      background: transparent;
+      font-size: 11px;
+    }
+
+    .footer-action:hover {
+      background: rgba(255, 255, 255, .64);
+    }
+
+    .body.sidebar-collapsed .sidebar,
+    .body.viewport-focused .sidebar {
+      visibility: visible;
+      transform: translateX(calc(-100% - 36px));
+      opacity: 0;
+    }
+
+    .body.inspector-hidden .inspector,
+    .body.viewport-focused .inspector {
+      visibility: visible;
+      transform: translateX(calc(100% + 36px));
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .body.sidebar-collapsed .hud,
+    .body.viewport-focused .hud {
+      left: 24px;
+    }
+
+    .body.inspector-hidden .compass,
+    .body.viewport-focused .compass {
+      right: 40px;
+    }
+
+    @media (max-width: 1180px) {
+      .sidebar {
+        width: 260px;
+      }
+
+      .inspector {
+        width: 304px;
+      }
+
+      .hud {
+        left: 306px;
+      }
+
+      .compass {
+        right: 350px;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       *,
       *::before,
@@ -2399,9 +3090,16 @@
     <header class="titlebar" id="titlebar" data-tauri-drag-region>
       <div class="titlebar-brand" data-tauri-drag-region>
         <img src="./assets/icon.svg" alt="" />
-        <span>DEM Studio</span>
+        <div class="brand-copy" data-tauri-drag-region>
+          <span>DEM Studio</span>
+          <small data-tauri-drag-region>
+            <span id="titlebarDocument">Synthetic DEM</span>
+            <span>·</span>
+            <span class="save-state">已保存</span>
+          </small>
+        </div>
+        <button class="btn" id="btnImport" type="button">导入 DEM</button>
       </div>
-      <div class="titlebar-context" id="titlebarDocument" data-tauri-drag-region>未命名地形</div>
       <div class="window-controls">
         <button class="caption-button" id="windowMinimize" type="button" aria-label="最小化" title="最小化">—</button>
         <button class="caption-button" id="windowMaximize" type="button" aria-label="最大化" title="最大化">□</button>
@@ -2414,7 +3112,6 @@
         <span id="subtitle">就绪</span>
       </div>
       <div class="actions">
-        <button class="btn" id="btnImport">导入 DEM</button>
         <button class="btn ghost" id="btnDemo">示例地形</button>
         <button class="btn" id="btnSavePreset">保存预设</button>
         <button class="btn primary" id="btnExport">导出 PNG</button>
@@ -2423,34 +3120,45 @@
 
     <main class="body" id="appBody">
       <aside class="sidebar" id="leftSidebar">
-        <button class="sidebar-toggle" id="btnToggleSidebar" type="button" title="收起左侧边栏">‹</button>
+        <button class="sidebar-toggle" id="btnToggleSidebar" type="button" title="收起资源面板">−</button>
         <section class="card">
-          <h2>文件与资源</h2>
+          <h2>资源</h2>
           <div class="dropzone" id="dropzone">
             <input id="fileInput" type="file" multiple accept=".tif,.tiff,.hgt,.asc,.png,.jpg,.jpeg,.webp,.prj,.xml,.tfw,.tifw,.wld" />
             <div>
               <div class="drop-icon"><img src="./assets/icon.svg" alt="" /></div>
               <strong>DEM</strong>
-              <span class="drop-action-label">拖放或选择文件</span>
+              <span class="drop-action-label">添加 DEM 或影像</span>
             </div>
           </div>
           <div class="statusline" id="importStatus" style="margin-top:10px;">等待导入文件。</div>
         </section>
 
-        <section class="card">
+        <section class="card current-scene">
+          <h2>当前场景</h2>
+          <div class="current-dataset">
+            <span class="recent-icon">▧</span>
+            <span class="current-dataset-copy">
+              <b id="mName">Synthetic DEM</b>
+              <span><span id="mSize">—</span> · <span id="mType">—</span></span>
+            </span>
+            <button class="scene-menu" type="button" title="场景操作">•••</button>
+          </div>
+        </section>
+
+        <section class="card recent-card">
           <div class="panel-head">
-            <h2>最近文件</h2>
-            <button class="link-btn" id="btnClearRecent" type="button">清空</button>
+            <h2>最近使用</h2>
           </div>
           <div class="recent-list" id="recentList"></div>
+          <div class="recent-footer">
+            <button class="link-btn" id="btnClearRecent" type="button">清空记录</button>
+          </div>
         </section>
 
         <section class="card">
           <h2>数据概览</h2>
           <div class="metric-grid">
-            <div class="metric"><span>文件</span><b id="mName">—</b></div>
-            <div class="metric"><span>格式</span><b id="mType">—</b></div>
-            <div class="metric"><span>原始尺寸</span><b id="mSize">—</b></div>
             <div class="metric"><span>高程范围</span><b id="mRange">—</b></div>
             <div class="metric"><span>NoData</span><b id="mNoData">—</b></div>
             <div class="metric"><span>网格</span><b id="mMesh">—</b></div>
@@ -2512,6 +3220,10 @@
       </section>
 
       <aside class="inspector">
+        <div class="inspector-heading">
+          <h2>地形设置</h2>
+          <button class="panel-close" id="btnCloseInspector" type="button" title="关闭设置">×</button>
+        </div>
         <div class="inspector-tabs" role="tablist" aria-label="属性设置">
           <button class="tab-btn active" type="button" data-tab="render">渲染</button>
           <button class="tab-btn" type="button" data-tab="material">材质</button>
@@ -3072,6 +3784,17 @@
           </section>
         </div>
       </aside>
+
+      <div class="workspace-footer">
+        <div class="runtime-pill">
+          <strong id="runtimeStatus">GPU Ready</strong>
+          <span id="fpsStatus">— FPS</span>
+        </div>
+        <div class="footer-actions">
+          <button class="footer-action" id="btnHelp" type="button">帮助</button>
+          <button class="footer-action" id="btnOpenInspector" type="button">设置</button>
+        </div>
+      </div>
     </main>
 
     <div class="preview-overlay" id="geoTiffPreviewOverlay" hidden>
@@ -3650,7 +4373,9 @@
       geoTiffPreviewProgressText: document.getElementById("geoTiffPreviewProgressText"),
       geoTiffPreviewBack: document.getElementById("btnGeoTiffPreviewBack"),
       geoTiffPreviewCancel: document.getElementById("btnGeoTiffPreviewCancel"),
-      geoTiffPreviewConfirm: document.getElementById("btnGeoTiffPreviewConfirm")
+      geoTiffPreviewConfirm: document.getElementById("btnGeoTiffPreviewConfirm"),
+      runtimeStatus: document.getElementById("runtimeStatus"),
+      fpsStatus: document.getElementById("fpsStatus")
     };
 
     let settings = { ...DEFAULT_SETTINGS };
@@ -4058,6 +4783,10 @@
       document.getElementById("btnEnhancedDefaults")?.addEventListener("click", restoreEnhancedDefaults);
       document.getElementById("btnClearRecent")?.addEventListener("click", clearRecentFiles);
       document.getElementById("btnViewportExpand")?.addEventListener("click", toggleViewportFocus);
+      document.getElementById("btnCloseInspector")?.addEventListener("click", () => setInspectorVisible(false));
+      document.getElementById("btnOpenInspector")?.addEventListener("click", () => setInspectorVisible(true));
+      document.querySelector(".scene-menu")?.addEventListener("click", () => setInspectorVisible(true));
+      document.getElementById("btnHelp")?.addEventListener("click", () => toast("拖入 DEM，调整参数后即可导出"));
       el.sidebarToggle?.addEventListener("click", toggleSidebar);
       document.getElementById("zoomOut")?.addEventListener("click", () => setZoom((Number(el.zoomRange?.value || 100) - 10)));
       document.getElementById("zoomIn")?.addEventListener("click", () => setZoom((Number(el.zoomRange?.value || 100) + 10)));
@@ -4741,6 +5470,11 @@
       setTimeout(resizeRenderer, 260);
     }
 
+    function setInspectorVisible(visible) {
+      el.body?.classList.toggle("inspector-hidden", !visible);
+      document.getElementById("btnOpenInspector")?.setAttribute("aria-pressed", String(visible));
+    }
+
     function toggleViewportFocus() {
       const focused = !el.body?.classList.contains("viewport-focused");
       el.body?.classList.toggle("viewport-focused", focused);
@@ -4759,9 +5493,9 @@
       el.sidebar?.classList.toggle("collapsed", collapsed);
 
       if (el.sidebarToggle) {
-        el.sidebarToggle.textContent = collapsed ? "›" : "‹";
-        el.sidebarToggle.title = collapsed ? "展开左侧边栏" : "收起左侧边栏";
-        el.sidebarToggle.setAttribute("aria-label", collapsed ? "展开左侧边栏" : "收起左侧边栏");
+        el.sidebarToggle.textContent = collapsed ? "+" : "−";
+        el.sidebarToggle.title = collapsed ? "展开资源面板" : "收起资源面板";
+        el.sidebarToggle.setAttribute("aria-label", collapsed ? "展开资源面板" : "收起资源面板");
       }
 
       setTimeout(resizeRenderer, 80);
@@ -7314,11 +8048,22 @@
     function startRenderLoop() {
       if (running) return;
       running = true;
+      let fpsFrames = 0;
+      let fpsStartedAt = performance.now();
+      if (el.runtimeStatus) el.runtimeStatus.textContent = "GPU Ready";
       const animate = () => {
         if (!running) return;
         raf = requestAnimationFrame(animate);
         controls?.update();
         renderFrame();
+        fpsFrames++;
+        const now = performance.now();
+        const elapsed = now - fpsStartedAt;
+        if (elapsed >= 1000) {
+          if (el.fpsStatus) el.fpsStatus.textContent = `${Math.round(fpsFrames * 1000 / elapsed)} FPS`;
+          fpsFrames = 0;
+          fpsStartedAt = now;
+        }
       };
       animate();
     }

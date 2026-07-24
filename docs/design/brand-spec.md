@@ -21,17 +21,19 @@ The product mark is the existing DEM Studio terrain glyph. It must be used as an
 - Color: cool white Mica-like base, pale blue-gray workspace, Windows blue `#0f6cda` for primary actions
 - Typography: `"Segoe UI Variable Text"`, `"Segoe UI Variable Display"`, with native CJK fallbacks
 - Spacing: 4 px base unit; primary intervals are 4, 8, 12, 16 and 24 px
-- Geometry: 6 px control radius, 10 px panel radius, 12 px floating controls and dialogs
-- Elevation: hairline borders plus two restrained shadow levels
+- Geometry: 8 px control radius, 15 px command-island radius and 20 px panel radius
+- Elevation: hairline borders plus soft, low-contrast floating-island shadows
 - Motion: 100–200 ms, `cubic-bezier(.1,.9,.2,1)`, with reduced-motion support
 - Window chrome: custom 52 px draggable title bar with native minimize, maximize/restore and close actions
 
 ## Workspace composition
 
-- Command bar: breadcrumb and current dataset status on the left, primary file/export actions on the right.
-- Resource rail: 260 px target width for import, recent files and live dataset metadata.
-- Terrain stage: flexible light canvas with grid, compact dataset HUD, orientation cube and bottom camera controls.
-- Inspector: 330 px target width with underline tabs and vertically grouped controls.
+- Window commands: detached brand/import and save/export islands over the 52 px drag region.
+- Terrain stage: full-window light canvas with grid; it remains the primary visual layer at every desktop size.
+- Resource island: 292 px target width for import, current scene and recent files.
+- Telemetry island: compact dataset HUD separated from the resource browser.
+- Inspector island: 324 px target width, dismissible without resizing the canvas and recoverable from the footer.
+- Camera controls remain centered at the bottom; runtime status and secondary actions use separate edge anchors.
 
 ## Interaction rules
 
