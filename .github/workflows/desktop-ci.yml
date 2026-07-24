@@ -73,6 +73,30 @@ jobs:
       - name: Static migration gate
         run: npm run verify
 
+      - name: Prepare Linux AppImage tools
+        if: matrix.platform == 'ubuntu-22.04'
+        shell: bash
+        run: |
+          set -euo pipefail
+          tools_dir="$HOME/.cache/tauri"
+          mkdir -p "$tools_dir"
+          curl --fail --location --retry 3 \
+            --output "$tools_dir/AppRun-x86_64" \
+            https://github.com/tauri-apps/binary-releases/releases/download/apprun-old/AppRun-x86_64
+          curl --fail --location --retry 3 \
+            --output "$tools_dir/linuxdeploy-x86_64.AppImage" \
+            https://github.com/tauri-apps/binary-releases/releases/download/linuxdeploy/linuxdeploy-x86_64.AppImage
+          curl --fail --location --retry 3 \
+            --output "$tools_dir/linuxdeploy-plugin-gtk.sh" \
+            https://raw.githubusercontent.com/tauri-apps/linuxdeploy-plugin-gtk/master/linuxdeploy-plugin-gtk.sh
+          curl --fail --location --retry 3 \
+            --output "$tools_dir/linuxdeploy-plugin-gstreamer.sh" \
+            https://raw.githubusercontent.com/tauri-apps/linuxdeploy-plugin-gstreamer/master/linuxdeploy-plugin-gstreamer.sh
+          curl --fail --location --retry 3 \
+            --output "$tools_dir/linuxdeploy-plugin-appimage.AppImage" \
+            https://github.com/linuxdeploy/linuxdeploy-plugin-appimage/releases/download/continuous/linuxdeploy-plugin-appimage-x86_64.AppImage
+          chmod +x "$tools_dir"/*
+
       - name: Build desktop bundle
         if: matrix.platform != 'ubuntu-22.04'
         uses: tauri-apps/tauri-action@v1
