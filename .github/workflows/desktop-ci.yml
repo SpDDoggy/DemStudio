@@ -74,9 +74,42 @@ jobs:
         run: npm run verify
 
       - name: Build desktop bundle
+        if: matrix.platform != 'ubuntu-22.04'
         uses: tauri-apps/tauri-action@v1
         with:
           args: ${{ matrix.args }}
+
+      - name: Build Linux Debian package
+        if: matrix.platform == 'ubuntu-22.04'
+        run: npm run tauri -- build --target x86_64-unknown-linux-gnu --bundles deb
+
+      - name: Build Linux AppImage
+        if: matrix.platform == 'ubuntu-22.04'
+        shell: bash
+        run: |
+          set +e
+          set -o pipefail
+          npm run tauri -- build \
+            --target x86_64-unknown-linux-gnu \
+            --bundles appimage \
+            --verbose 2>&1 | tee tauri-linux-appimage.log
+          status=${PIPESTATUS[0]}
+          if (( status != 0 )); then
+            message=$(tail -n 80 tauri-linux-appimage.log)
+            message=${message//'%'/'%25'}
+            message=${message//$'\r'/'%0D'}
+            message=${message//$'\n'/'%0A'}
+            echo "::error title=Linux AppImage bundle failed::$message"
+            exit "$status"
+          fi
+
+      - name: Upload Linux bundle log
+        if: failure() && matrix.platform == 'ubuntu-22.04'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dem-studio-linux-bundle-log
+          path: tauri-linux-appimage.log
+          if-no-files-found: ignore
 
       - name: Upload unsigned bundles
         uses: actions/upload-artifact@v4
