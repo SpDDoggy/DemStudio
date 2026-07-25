@@ -68,7 +68,7 @@ try {
     $process = Start-Process -FilePath $resolvedExecutable -PassThru
     $target = $null
 
-    for ($attempt = 0; $attempt -lt 24; $attempt += 1) {
+    for ($attempt = 0; $attempt -lt 80; $attempt += 1) {
         Start-Sleep -Milliseconds 250
         try {
             $targets = Invoke-RestMethod -Uri "http://127.0.0.1:$DebugPort/json" -TimeoutSec 1
@@ -98,11 +98,16 @@ JSON.stringify({
   hostCore: window.demStudioHost?.core ?? null,
   lensDbLoad: typeof window.lens?.db?.load,
   lensFsWriteBlob: typeof window.lens?.fs?.writeBlob,
+  coreOpenPath: typeof window.lens?.core?.openDemPath,
+  coreOpenTexture: typeof window.lens?.core?.openTexture,
   coreSample: typeof window.lens?.core?.sampleDem,
   coreExport: typeof window.lens?.core?.encodeGeoTiff,
   windowMinimize: typeof window.lens?.window?.minimize,
   titlebarHeight: Math.round(document.getElementById("titlebar")?.getBoundingClientRect().height ?? 0),
   canvasCount: document.querySelectorAll("canvas").length,
+  browserFileInputs: document.querySelectorAll('input[type="file"]').length,
+  appDialog: Boolean(document.getElementById("appDialogLayer")),
+  panelCapsules: document.querySelectorAll(".panel-capsule").length,
   status: document.getElementById("importStatus")?.textContent ?? null,
   bootError: document.getElementById("importStatus")?.classList.contains("err") ?? false
 })
@@ -125,24 +130,29 @@ JSON.stringify({
         $state.hostCore -ne "rust-dem-core" -or
         $state.lensDbLoad -ne "function" -or
         $state.lensFsWriteBlob -ne "function" -or
+        $state.coreOpenPath -ne "function" -or
+        $state.coreOpenTexture -ne "function" -or
         $state.coreSample -ne "function" -or
         $state.coreExport -ne "function" -or
         $state.windowMinimize -ne "function" -or
         $state.titlebarHeight -ne 52 -or
         $state.canvasCount -lt 1 -or
+        $state.browserFileInputs -ne 0 -or
+        -not $state.appDialog -or
+        $state.panelCapsules -ne 2 -or
         $state.bootError) {
         throw "Runtime smoke assertions failed."
     }
 
-    $document = Invoke-Cdp -Socket $socket -Id 2 -Method "DOM.getDocument"
-    $fileInput = Invoke-Cdp -Socket $socket -Id 3 -Method "DOM.querySelector" -Params @{
-        nodeId = $document.result.root.nodeId
-        selector = "#fileInput"
+    $fixtureJson = [System.IO.Path]::GetFullPath($Fixture) | ConvertTo-Json -Compress
+    $openResult = Invoke-Cdp -Socket $socket -Id 4 -Method "Runtime.evaluate" -Params @{
+        expression = "(async () => { await window.__demStudioOpenPath($fixtureJson); return true; })()"
+        awaitPromise = $true
+        returnByValue = $true
     }
-    Invoke-Cdp -Socket $socket -Id 4 -Method "DOM.setFileInputFiles" -Params @{
-        nodeId = $fileInput.result.nodeId
-        files = @([System.IO.Path]::GetFullPath($Fixture))
-    } | Out-Null
+    if ($openResult.result.exceptionDetails) {
+        throw ($openResult.result.exceptionDetails.text)
+    }
 
     $importState = $null
     for ($attempt = 0; $attempt -lt 40; $attempt += 1) {
@@ -170,6 +180,54 @@ JSON.stringify({
         $importState.type -ne "ASCII Grid" -or
         $importState.size -notmatch "^4\s+\D\s+4$") {
         throw "ASC import smoke assertions failed."
+    }
+
+    $projectionResult = Invoke-Cdp -Socket $socket -Id 54 -Method "Runtime.evaluate" -Params @{
+        expression = @'
+(() => {
+  window.__demStudioHarness.setCameraMode("orthographic");
+  const orthographicState = window.__demStudioHarness.getState();
+  const orthographic = {
+    actual: orthographicState.cameraMode === "orthographic",
+    setting: orthographicState.settingMode,
+    pressed: orthographicState.activeCameraPressed
+  };
+  window.__demStudioHarness.setCameraMode("perspective");
+  const perspectiveState = window.__demStudioHarness.getState();
+  const perspective = {
+    actual: perspectiveState.cameraMode === "perspective",
+    setting: perspectiveState.settingMode,
+    pressed: perspectiveState.activeCameraPressed
+  };
+  const infiniteGrid = perspectiveState.infiniteGrid;
+  window.__demStudioHarness.setPanelsVisible(false, false);
+  const collapsedState = window.__demStudioHarness.getState();
+  const collapsed = {
+    resource: collapsedState.resourceCollapsed,
+    settings: collapsedState.settingsCollapsed
+  };
+  window.__demStudioHarness.setPanelsVisible(true, true);
+  return JSON.stringify({ orthographic, perspective, infiniteGrid, collapsed });
+})()
+'@
+        returnByValue = $true
+    }
+    if ($projectionResult.result.exceptionDetails) {
+        $projectionResult.result.exceptionDetails | ConvertTo-Json -Depth 10
+        throw "Projection runtime evaluation failed."
+    }
+    $projectionState = $projectionResult.result.result.value | ConvertFrom-Json
+    $projectionState | ConvertTo-Json -Compress
+    if (-not $projectionState.orthographic.actual -or
+        $projectionState.orthographic.setting -ne "orthographic" -or
+        $projectionState.orthographic.pressed -ne "true" -or
+        -not $projectionState.perspective.actual -or
+        $projectionState.perspective.setting -ne "perspective" -or
+        $projectionState.perspective.pressed -ne "true" -or
+        -not $projectionState.infiniteGrid -or
+        -not $projectionState.collapsed.resource -or
+        -not $projectionState.collapsed.settings) {
+        throw "Projection, infinite grid, or panel capsule assertions failed."
     }
 
     $exportResult = Invoke-Cdp -Socket $socket -Id 55 -Method "Runtime.evaluate" -Params @{

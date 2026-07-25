@@ -3053,6 +3053,286 @@
       right: 40px;
     }
 
+    /* Resource telemetry, collapsible islands and in-app dialogs */
+    .sidebar {
+      bottom: 190px;
+      transform-origin: 22px 22px;
+      clip-path: inset(0 round var(--island-radius));
+      filter: blur(0);
+      will-change: transform, opacity, clip-path, filter;
+    }
+
+    .sidebar .card:last-of-type {
+      display: block;
+    }
+
+    .resource-telemetry {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+      margin: 0 0 17px;
+      padding: 11px;
+      border: 1px solid rgba(221, 230, 241, .92);
+      border-radius: 12px;
+      background: rgba(247, 250, 254, .72);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .82);
+    }
+
+    .resource-telemetry .chip {
+      min-width: 0;
+      padding: 7px 8px 7px 24px;
+      border-radius: 8px;
+      color: #43536b;
+      background: rgba(255, 255, 255, .72);
+      font-size: 9.5px;
+      line-height: 1.35;
+      white-space: nowrap;
+    }
+
+    .resource-telemetry .chip:first-child {
+      color: #24334a;
+      font-weight: 650;
+    }
+
+    .resource-telemetry .chip:nth-child(3) {
+      grid-column: 1 / -1;
+    }
+
+    .resource-telemetry .chip::before {
+      top: 8px;
+      left: 8px;
+      width: 9px;
+      height: 9px;
+      border-width: 1.3px;
+    }
+
+    .inspector {
+      transform-origin: calc(100% - 22px) 22px;
+      clip-path: inset(0 round var(--island-radius));
+      filter: blur(0);
+      will-change: transform, opacity, clip-path, filter;
+    }
+
+    .panel-capsule {
+      position: absolute;
+      z-index: 9;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 14px 0 11px;
+      border: 1px solid rgba(255, 255, 255, .92);
+      border-radius: 999px;
+      color: #31415a;
+      background: rgba(255, 255, 255, .84);
+      box-shadow:
+        0 12px 30px rgba(54, 75, 104, .11),
+        inset 0 1px 0 rgba(255, 255, 255, .88);
+      backdrop-filter: blur(24px) saturate(135%);
+      opacity: 0;
+      transform: scale(.7);
+      pointer-events: none;
+      font: 650 11px/1 "Segoe UI Variable Text", "Segoe UI", sans-serif;
+      transition:
+        opacity 150ms var(--fluent-motion),
+        transform 220ms cubic-bezier(.16, 1.28, .3, 1);
+    }
+
+    .panel-capsule:hover {
+      color: var(--workspace-blue);
+      background: rgba(255, 255, 255, .96);
+      transform: translateY(-1px) scale(1.02);
+    }
+
+    .panel-capsule:active {
+      transform: scale(.96);
+    }
+
+    .resource-capsule {
+      top: 150px;
+      left: 24px;
+    }
+
+    .settings-capsule {
+      top: 116px;
+      right: 24px;
+    }
+
+    .capsule-mark {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(15, 108, 218, .10);
+    }
+
+    .capsule-mark::after {
+      content: "";
+      width: 7px;
+      height: 7px;
+      border: 1.5px solid var(--workspace-blue);
+      border-radius: 2px;
+    }
+
+    .body.sidebar-collapsed .sidebar {
+      transform: translate(-8px, 4px) scale(.08, .07);
+      clip-path: inset(0 0 88% 0 round 999px);
+      filter: blur(9px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .body.inspector-hidden .inspector {
+      transform: translate(8px, 4px) scale(.08, .055);
+      clip-path: inset(0 0 90% 0 round 999px);
+      filter: blur(9px);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .body.sidebar-collapsed .resource-capsule,
+    .body.inspector-hidden .settings-capsule {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .body.viewport-focused .panel-capsule {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .app-dialog-layer {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 32px;
+      background: rgba(28, 42, 62, .16);
+      backdrop-filter: blur(10px) saturate(110%);
+      opacity: 0;
+      transition: opacity 160ms var(--fluent-motion);
+    }
+
+    .app-dialog-layer[hidden] {
+      display: none;
+    }
+
+    .app-dialog-layer.open {
+      opacity: 1;
+    }
+
+    .app-dialog {
+      width: min(420px, calc(100vw - 64px));
+      padding: 21px;
+      border: 1px solid rgba(255, 255, 255, .94);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .92);
+      box-shadow:
+        0 30px 80px rgba(31, 48, 74, .22),
+        0 4px 14px rgba(31, 48, 74, .08);
+      backdrop-filter: blur(32px) saturate(140%);
+      opacity: 0;
+      transform: translateY(10px) scale(.96);
+      transition:
+        opacity 180ms var(--fluent-motion),
+        transform 220ms cubic-bezier(.16, 1.12, .3, 1);
+    }
+
+    .app-dialog-layer.open .app-dialog {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .app-dialog-head {
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      gap: 13px;
+      align-items: start;
+    }
+
+    .app-dialog-mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: linear-gradient(145deg, rgba(15, 108, 218, .16), rgba(15, 108, 218, .07));
+    }
+
+    .app-dialog-mark::after {
+      content: "";
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--workspace-blue);
+      border-radius: 4px;
+    }
+
+    .app-dialog h2 {
+      margin: 1px 0 6px;
+      color: #172033;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .app-dialog p {
+      margin: 0;
+      color: #68768b;
+      font-size: 11px;
+      line-height: 1.65;
+      text-wrap: pretty;
+    }
+
+    .app-dialog-input-wrap {
+      margin-top: 17px;
+    }
+
+    .app-dialog-input-wrap[hidden] {
+      display: none;
+    }
+
+    .app-dialog-input-wrap input {
+      width: 100%;
+      height: 38px;
+      padding: 0 12px;
+      border-radius: 9px;
+      font-size: 12px;
+    }
+
+    .app-dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .app-dialog-actions .btn {
+      min-width: 78px;
+      height: 36px;
+      border-radius: 9px;
+    }
+
+    .app-dialog-actions .btn.danger {
+      border-color: #c54848;
+      background: #c54848;
+      color: #fff;
+    }
+
+    .preview-overlay {
+      background: rgba(28, 42, 62, .16);
+      backdrop-filter: blur(10px) saturate(110%);
+    }
+
+    .preview-dialog {
+      border: 1px solid rgba(255, 255, 255, .94);
+      border-radius: 20px;
+      background: rgba(255, 255, 255, .94);
+      box-shadow: 0 30px 80px rgba(31, 48, 74, .22);
+    }
+
     @media (max-width: 1180px) {
       .sidebar {
         width: 260px;
@@ -3124,7 +3404,6 @@
         <section class="card">
           <h2>资源</h2>
           <div class="dropzone" id="dropzone">
-            <input id="fileInput" type="file" multiple accept=".tif,.tiff,.hgt,.asc,.png,.jpg,.jpeg,.webp,.prj,.xml,.tfw,.tifw,.wld" />
             <div>
               <div class="drop-icon"><img src="./assets/icon.svg" alt="" /></div>
               <strong>DEM</strong>
@@ -3146,6 +3425,15 @@
           </div>
         </section>
 
+        <section class="resource-telemetry" aria-label="地形数据">
+          <span class="chip" id="hudResolution">分辨率 —</span>
+          <span class="chip" id="hudVertices">顶点 —</span>
+          <span class="chip" id="hudMode">模式 自然地形</span>
+          <span hidden id="mRange">—</span>
+          <span hidden id="mNoData">—</span>
+          <span hidden id="mMesh">—</span>
+        </section>
+
         <section class="card recent-card">
           <div class="panel-head">
             <h2>最近使用</h2>
@@ -3153,15 +3441,6 @@
           <div class="recent-list" id="recentList"></div>
           <div class="recent-footer">
             <button class="link-btn" id="btnClearRecent" type="button">清空记录</button>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>数据概览</h2>
-          <div class="metric-grid">
-            <div class="metric"><span>高程范围</span><b id="mRange">—</b></div>
-            <div class="metric"><span>NoData</span><b id="mNoData">—</b></div>
-            <div class="metric"><span>网格</span><b id="mMesh">—</b></div>
           </div>
         </section>
 
@@ -3180,12 +3459,6 @@
               <button class="btn" id="emptyDemo">先看示例</button>
             </div>
           </div>
-        </div>
-
-        <div class="hud">
-          <span class="chip" id="hudResolution">分辨率 —</span>
-          <span class="chip" id="hudVertices">顶点 —</span>
-          <span class="chip" id="hudMode">模式 自然地形</span>
         </div>
 
         <div class="compass" aria-hidden="true">
@@ -3399,7 +3672,6 @@
             </div>
 
             <div class="texture-upload">
-              <input id="textureInput" type="file" accept=".png,.jpg,.jpeg,.webp" hidden />
               <div class="row">
                 <button class="btn" id="btnTextureImport" type="button">导入贴图</button>
                 <button class="btn subtle" id="btnTextureClear" type="button">清除贴图</button>
@@ -3785,6 +4057,15 @@
         </div>
       </aside>
 
+      <button class="panel-capsule resource-capsule" id="btnOpenResources" type="button" aria-label="展开资源面板">
+        <span class="capsule-mark"></span>
+        <span>资源</span>
+      </button>
+      <button class="panel-capsule settings-capsule" id="btnOpenSettingsCapsule" type="button" aria-label="展开地形设置">
+        <span class="capsule-mark"></span>
+        <span>地形设置</span>
+      </button>
+
       <div class="workspace-footer">
         <div class="runtime-pill">
           <strong id="runtimeStatus">GPU Ready</strong>
@@ -3820,6 +4101,25 @@
             <button class="btn" id="btnGeoTiffPreviewCancel" type="button">取消计算</button>
             <button class="btn primary" id="btnGeoTiffPreviewConfirm" type="button" disabled>导出当前设置</button>
           </div>
+        </footer>
+      </section>
+    </div>
+
+    <div class="app-dialog-layer" id="appDialogLayer" hidden>
+      <section class="app-dialog" role="dialog" aria-modal="true" aria-labelledby="appDialogTitle" aria-describedby="appDialogMessage">
+        <header class="app-dialog-head">
+          <span class="app-dialog-mark" aria-hidden="true"></span>
+          <div>
+            <h2 id="appDialogTitle">DEM Studio</h2>
+            <p id="appDialogMessage"></p>
+          </div>
+        </header>
+        <div class="app-dialog-input-wrap" id="appDialogInputWrap" hidden>
+          <input id="appDialogInput" type="text" autocomplete="off" />
+        </div>
+        <footer class="app-dialog-actions">
+          <button class="btn" id="appDialogCancel" type="button">取消</button>
+          <button class="btn primary" id="appDialogConfirm" type="button">确定</button>
         </footer>
       </section>
     </div>
@@ -4333,7 +4633,6 @@
       sidebar: document.getElementById("leftSidebar"),
       sidebarToggle: document.getElementById("btnToggleSidebar"),
       viewport: document.getElementById("viewport"),
-      fileInput: document.getElementById("fileInput"),
       dropzone: document.getElementById("dropzone"),
       importStatus: document.getElementById("importStatus"),
       emptyState: document.getElementById("emptyState"),
@@ -4352,7 +4651,6 @@
       hudVertices: document.getElementById("hudVertices"),
       hudMode: document.getElementById("hudMode"),
       presetSelect: document.getElementById("presetSelect"),
-      textureInput: document.getElementById("textureInput"),
       textureName: document.getElementById("textureName"),
       textureScaleControl: document.getElementById("textureScaleControl"),
       textureRelightControl: document.getElementById("textureRelightControl"),
@@ -4375,7 +4673,14 @@
       geoTiffPreviewCancel: document.getElementById("btnGeoTiffPreviewCancel"),
       geoTiffPreviewConfirm: document.getElementById("btnGeoTiffPreviewConfirm"),
       runtimeStatus: document.getElementById("runtimeStatus"),
-      fpsStatus: document.getElementById("fpsStatus")
+      fpsStatus: document.getElementById("fpsStatus"),
+      dialogLayer: document.getElementById("appDialogLayer"),
+      dialogTitle: document.getElementById("appDialogTitle"),
+      dialogMessage: document.getElementById("appDialogMessage"),
+      dialogInputWrap: document.getElementById("appDialogInputWrap"),
+      dialogInput: document.getElementById("appDialogInput"),
+      dialogCancel: document.getElementById("appDialogCancel"),
+      dialogConfirm: document.getElementById("appDialogConfirm")
     };
 
     let settings = { ...DEFAULT_SETTINGS };
@@ -4414,6 +4719,7 @@
     let geoTiffPreviewStale = false;
     let datasetRevision = 0;
     let terrainBuildGeneration = 0;
+    let dialogRequest = null;
 
     init();
 
@@ -4424,6 +4730,7 @@
         await loadSettings();
         await loadCustomPresets();
         normalizeSettings();
+        ensureCameraProjection(settings.cameraMode);
         await restoreCustomTextureFromSettings();
         await loadRecentFiles();
         renderPresetSelect();
@@ -4499,8 +4806,7 @@
       fillLight.position.set(-5, 4, -6);
       scene.add(fillLight);
 
-      gridHelper = new THREE.GridHelper(9, 18, 0x9aa8b8, 0xd4dce6);
-      gridHelper.position.y = -0.018;
+      gridHelper = createInfiniteGrid();
       scene.add(gridHelper);
 
       const shadowGeo = new THREE.PlaneGeometry(32, 32);
@@ -4532,12 +4838,72 @@
       setView("iso");
     }
 
+    function createInfiniteGrid() {
+      const geometry = new THREE.PlaneGeometry(2000, 2000, 1, 1);
+      geometry.rotateX(-Math.PI / 2);
+      const material = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        depthTest: true,
+        side: THREE.DoubleSide,
+        uniforms: {
+          uCameraXZ: { value: new THREE.Vector2() },
+          uFadeStart: { value: 13 },
+          uFadeEnd: { value: 30 },
+          uMinorColor: { value: new THREE.Color(0xd8e3ef) },
+          uMajorColor: { value: new THREE.Color(0xb3c6da) }
+        },
+        vertexShader: `
+          varying vec3 vWorldPosition;
+          void main() {
+            vec4 world = modelMatrix * vec4(position, 1.0);
+            vWorldPosition = world.xyz;
+            gl_Position = projectionMatrix * viewMatrix * world;
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vWorldPosition;
+          uniform vec2 uCameraXZ;
+          uniform float uFadeStart;
+          uniform float uFadeEnd;
+          uniform vec3 uMinorColor;
+          uniform vec3 uMajorColor;
+
+          float gridMask(vec2 world, float size, float width) {
+            vec2 coord = world / size;
+            vec2 derivative = max(fwidth(coord), vec2(0.0001));
+            vec2 distanceToLine = abs(fract(coord - 0.5) - 0.5) / derivative;
+            float line = min(distanceToLine.x, distanceToLine.y);
+            return 1.0 - smoothstep(width, width + 1.0, line);
+          }
+
+          void main() {
+            float minor = gridMask(vWorldPosition.xz, 0.75, 0.12);
+            float major = gridMask(vWorldPosition.xz, 3.75, 0.18);
+            float distanceFromCamera = length(vWorldPosition.xz - uCameraXZ);
+            float radialFade = 1.0 - smoothstep(uFadeStart, uFadeEnd, distanceFromCamera);
+            float horizonFade = smoothstep(0.06, 0.30, abs(normalize(cameraPosition - vWorldPosition).y));
+            float alpha = max(minor * 0.14, major * 0.34) * radialFade * horizonFade;
+            if (alpha < 0.004) discard;
+            vec3 color = mix(uMinorColor, uMajorColor, major);
+            gl_FragColor = vec4(color, alpha);
+          }
+        `
+      });
+      const grid = new THREE.Mesh(geometry, material);
+      grid.position.y = -0.018;
+      grid.renderOrder = -2;
+      grid.frustumCulled = false;
+      return grid;
+    }
+
     function createCamera(mode) {
       const safeMode = VALID_CAMERA_MODES.has(mode) ? mode : DEFAULT_SETTINGS.cameraMode;
       const rect = el.viewport.getBoundingClientRect();
       const aspect = Math.max(1, rect.width) / Math.max(1, rect.height);
       const oldPos = camera?.position?.clone() || new THREE.Vector3(4.2, 3.2, 4.2);
       const oldTarget = controls?.target?.clone() || new THREE.Vector3(0, 0.25, 0);
+      const oldZoom = Number(camera?.zoom || el.zoomRange?.value / 100 || 1);
 
       if (camera) scene.remove(camera);
 
@@ -4553,10 +4919,14 @@
           0.01,
           1000
         );
+        camera.userData.orthoSize = size;
       }
 
+      settings.cameraMode = safeMode;
       camera.position.copy(oldPos);
       camera.lookAt(oldTarget);
+      camera.zoom = oldZoom;
+      camera.updateProjectionMatrix();
       scene.add(camera);
 
       if (controls) {
@@ -4567,6 +4937,23 @@
       updateCameraModeButtons();
       syncZoomLabel();
       setupComposer();
+    }
+
+    function cameraProjectionMode() {
+      if (camera?.isOrthographicCamera) return "orthographic";
+      if (camera?.isPerspectiveCamera) return "perspective";
+      return null;
+    }
+
+    function ensureCameraProjection(mode = settings.cameraMode) {
+      const safeMode = VALID_CAMERA_MODES.has(mode) ? mode : DEFAULT_SETTINGS.cameraMode;
+      if (cameraProjectionMode() !== safeMode) {
+        createCamera(safeMode);
+      } else {
+        settings.cameraMode = safeMode;
+        updateCameraModeButtons();
+      }
+      return cameraProjectionMode();
     }
 
     function setupComposer() {
@@ -4640,8 +5027,22 @@
     }
 
     function renderFrame() {
+      updateInfiniteGrid();
       if (composer) composer.render();
       else if (renderer && scene && camera) renderer.render(scene, camera);
+    }
+
+    function updateInfiniteGrid() {
+      if (!gridHelper?.material?.uniforms || !camera) return;
+      const uniforms = gridHelper.material.uniforms;
+      uniforms.uCameraXZ?.value.set(camera.position.x, camera.position.z);
+      gridHelper.position.x = Math.round(camera.position.x / 3.75) * 3.75;
+      gridHelper.position.z = Math.round(camera.position.z / 3.75) * 3.75;
+      const target = controls?.target || new THREE.Vector3();
+      const distance = Math.max(8, camera.position.distanceTo(target));
+      const orthographicBoost = camera.isOrthographicCamera ? 1.55 : 1;
+      uniforms.uFadeStart.value = Math.max(11, distance * 1.45 * orthographicBoost);
+      uniforms.uFadeEnd.value = Math.max(26, distance * 3.2 * orthographicBoost);
     }
 
     function resizeRenderer() {
@@ -4656,7 +5057,7 @@
       if (camera?.isPerspectiveCamera) {
         camera.aspect = aspect;
       } else if (camera?.isOrthographicCamera) {
-        const size = 6.2;
+        const size = Number(camera.userData.orthoSize || 6.2);
         camera.left = -size * aspect / 2;
         camera.right = size * aspect / 2;
         camera.top = size / 2;
@@ -4693,13 +5094,6 @@
         }
       });
 
-      el.fileInput?.addEventListener("change", async (event) => {
-        const files = Array.from(event.target.files || []);
-        const file = findPrimaryImportFile(files);
-        if (file) await loadFile(file, files);
-        event.target.value = "";
-      });
-
       ["dragenter", "dragover"].forEach(type => {
         el.dropzone?.addEventListener(type, (event) => {
           event.preventDefault();
@@ -4723,7 +5117,12 @@
       const triggerImport = async () => {
         const coreApi = lensApi?.core || window.lens?.core;
         if (!coreApi?.openDem) {
-          el.fileInput?.click();
+          await showAppDialog({
+            title: "桌面文件服务不可用",
+            message: "DEM Studio 无法连接 Tauri 文件服务。请重新启动应用后再试。",
+            confirmText: "知道了",
+            cancelText: null
+          });
           return;
         }
         try {
@@ -4735,28 +5134,13 @@
             return;
           }
           if (!parsed.engine) {
-            el.fileInput?.click();
-            return;
+            throw new Error("没有找到可解析的 DEM 文件。");
           }
-          dataset = normalizeDataset(parsed);
-          addRecentFile({
-            name: dataset.name,
-            size: 0,
-            lastModified: Date.now()
+          await adoptParsedDataset(parsed, {
+            sourcePath: parsed.sourcePath,
+            sourcePaths: parsed.sourcePaths,
+            size: 0
           });
-          datasetRevision++;
-          geoTiffPreviewFingerprint = "";
-          geoTiffPreviewStale = false;
-          enhancedHeightCache = null;
-          const titlebarDocument = document.getElementById("titlebarDocument");
-          if (titlebarDocument) titlebarDocument.textContent = dataset.name;
-          setStatus(`正在生成预览网格：${formatNumber(dataset.width)} × ${formatNumber(dataset.height)} ...`);
-          await buildTerrain();
-          updateGeoInfo();
-          updateGeoTiffPreviewStatusUI();
-          fitCamera();
-          setStatus(`Rust Core · 导入完成：${dataset.name} · ${dataset.type} · ${formatNumber(dataset.width)} × ${formatNumber(dataset.height)}`, "ok");
-          toast("地形已生成");
         } catch (error) {
           console.error(error);
           setStatus(error.message || String(error) || "导入失败。", "error");
@@ -4785,6 +5169,8 @@
       document.getElementById("btnViewportExpand")?.addEventListener("click", toggleViewportFocus);
       document.getElementById("btnCloseInspector")?.addEventListener("click", () => setInspectorVisible(false));
       document.getElementById("btnOpenInspector")?.addEventListener("click", () => setInspectorVisible(true));
+      document.getElementById("btnOpenSettingsCapsule")?.addEventListener("click", () => setInspectorVisible(true));
+      document.getElementById("btnOpenResources")?.addEventListener("click", () => setSidebarVisible(true));
       document.querySelector(".scene-menu")?.addEventListener("click", () => setInspectorVisible(true));
       document.getElementById("btnHelp")?.addEventListener("click", () => toast("拖入 DEM，调整参数后即可导出"));
       el.sidebarToggle?.addEventListener("click", toggleSidebar);
@@ -4795,14 +5181,10 @@
       el.geoTiffPreviewCancel?.addEventListener("click", cancelGeoTiffPreview);
       el.geoTiffPreviewConfirm?.addEventListener("click", confirmGeoTiffPreview);
 
-      document.getElementById("btnTextureImport")?.addEventListener("click", () => el.textureInput?.click());
+      document.getElementById("btnTextureImport")?.addEventListener("click", importTextureWithDesktopDialog);
       document.getElementById("btnTextureClear")?.addEventListener("click", clearCustomTexture);
       document.getElementById("btnTextureColorReset")?.addEventListener("click", restoreTextureColorDefaults);
-      el.textureInput?.addEventListener("change", async (event) => {
-        const file = event.target.files?.[0];
-        if (file) await loadCustomTextureFile(file);
-        event.target.value = "";
-      });
+      bindAppDialog();
 
       document.querySelectorAll("[data-tab]").forEach(btn => {
         btn.addEventListener("click", () => switchInspectorTab(btn.dataset.tab));
@@ -4839,6 +5221,35 @@
         startRenderLoop();
         resizeRenderer();
       };
+
+      window.__demStudioOpenPath = async path => {
+        await openRecentFile({
+          id: String(path),
+          name: String(path).split(/[\\/]/).pop() || "DEM",
+          path,
+          companionPaths: [],
+          size: 0
+        });
+      };
+
+      window.__demStudioHarness = Object.freeze({
+        setCameraMode,
+        setPanelsVisible(resourceVisible, settingsVisible) {
+          setSidebarVisible(Boolean(resourceVisible));
+          setInspectorVisible(Boolean(settingsVisible));
+        },
+        getState() {
+          const mode = cameraProjectionMode();
+          return {
+            cameraMode: mode,
+            settingMode: settings.cameraMode,
+            activeCameraPressed: document.querySelector(`[data-camera-mode="${mode}"]`)?.getAttribute("aria-pressed"),
+            infiniteGrid: Boolean(gridHelper?.material?.isShaderMaterial && gridHelper?.material?.uniforms?.uFadeEnd),
+            resourceCollapsed: document.getElementById("appBody")?.classList.contains("sidebar-collapsed"),
+            settingsCollapsed: document.getElementById("appBody")?.classList.contains("inspector-hidden")
+          };
+        }
+      });
 
       window.addEventListener("message", (event) => {
         const msg = event.data;
@@ -5123,6 +5534,7 @@
         customTexture = null;
       }
 
+      ensureCameraProjection(settings.cameraMode);
       renderPresetSelect();
       syncControls();
       syncTextureInfo();
@@ -5135,7 +5547,13 @@
 
     async function saveCurrentPreset() {
       const baseName = getPresetByKey(settings.renderPreset)?.name?.replace(/^自定义 · /, "") || "我的地形预设";
-      const name = (window.prompt?.("保存为预设名称", baseName) || "").trim();
+      const name = String(await showAppDialog({
+        type: "prompt",
+        title: "保存渲染预设",
+        message: "输入一个便于识别的预设名称。",
+        defaultValue: baseName,
+        confirmText: "保存"
+      }) || "").trim();
       if (!name) return;
 
       const id = slugify(name) || `preset-${Date.now()}`;
@@ -5170,6 +5588,15 @@
         return;
       }
       const id = String(key).slice("custom:".length);
+      const selected = customPresets.find(item => item.id === id);
+      const confirmed = await showAppDialog({
+        type: "confirm",
+        title: "删除自定义预设",
+        message: `确定删除“${selected?.name || "当前预设"}”吗？`,
+        confirmText: "删除",
+        danger: true
+      });
+      if (!confirmed) return;
       customPresets = customPresets.filter(item => item.id !== id);
       settings.renderPreset = "clay";
       await saveCustomPresets();
@@ -5367,14 +5794,20 @@
 
     function addRecentFile(file) {
       if (!dataset) return;
+      const sourcePath = file.sourcePath || dataset.sourcePath || null;
+      const sourcePaths = Array.isArray(file.sourcePaths || dataset.sourcePaths)
+        ? [...(file.sourcePaths || dataset.sourcePaths)]
+        : (sourcePath ? [sourcePath] : []);
       const record = {
-        id: `${file.name}:${file.size}:${file.lastModified || Date.now()}`,
+        id: sourcePath || `${file.name}:${file.size}:${file.lastModified || Date.now()}`,
         name: file.name,
         type: dataset.type,
         size: file.size || 0,
         width: dataset.width,
         height: dataset.height,
         range: `${formatElevation(dataset.min)} – ${formatElevation(dataset.max)}`,
+        path: sourcePath,
+        companionPaths: sourcePaths.filter(path => path && path !== sourcePath),
         time: new Date().toISOString()
       };
 
@@ -5406,16 +5839,68 @@
       `).join("");
 
       el.recentList.querySelectorAll("[data-recent-id]").forEach(btn => {
-        btn.addEventListener("click", () => {
+        btn.addEventListener("click", async () => {
           const item = recentFiles.find(row => row.id === btn.dataset.recentId);
           if (!item) return;
-          toast("最近文件仅记录信息，请重新选择文件导入");
-          setStatus(`${item.name} · ${item.width}×${item.height} · ${item.range}`);
+          await openRecentFile(item);
         });
       });
     }
 
+    async function openRecentFile(item) {
+      if (importBusy) return;
+      if (!item?.path) {
+        await showAppDialog({
+          title: "需要重新导入一次",
+          message: "这条记录来自旧版本，没有保存文件路径。重新导入后即可直接从最近使用打开。",
+          confirmText: "知道了",
+          cancelText: null
+        });
+        return;
+      }
+      const coreApi = lensApi?.core || window.lens?.core;
+      if (!coreApi?.openDemPath) {
+        await showAppDialog({
+          title: "桌面文件服务不可用",
+          message: "无法打开最近文件。请重新启动 DEM Studio 后再试。",
+          confirmText: "知道了",
+          cancelText: null
+        });
+        return;
+      }
+      setImportBusy(true);
+      try {
+        setStatus(`正在重新打开：${item.name} ...`);
+        const parsed = await coreApi.openDemPath(item.path, item.companionPaths || []);
+        await adoptParsedDataset(parsed, {
+          sourcePath: item.path,
+          sourcePaths: [item.path, ...(item.companionPaths || [])],
+          size: item.size || 0
+        });
+      } catch (error) {
+        console.error("Open recent file failed", error);
+        setStatus(`无法打开最近文件：${item.name}`, "error");
+        await showAppDialog({
+          title: "无法打开最近文件",
+          message: error?.message || "文件可能已经移动、重命名或无权访问。",
+          confirmText: "关闭",
+          cancelText: null
+        });
+      } finally {
+        setImportBusy(false);
+      }
+    }
+
     async function clearRecentFiles() {
+      if (!recentFiles.length) return;
+      const confirmed = await showAppDialog({
+        type: "confirm",
+        title: "清空最近使用",
+        message: "这会移除最近文件记录，但不会删除磁盘上的文件。",
+        confirmText: "清空",
+        danger: true
+      });
+      if (!confirmed) return;
       recentFiles = [];
       renderRecentFiles();
       await saveRecentFiles();
@@ -5464,15 +5949,19 @@
     }
 
     function toggleSidebar() {
-      settings.sidebarCollapsed = !settings.sidebarCollapsed;
+      setSidebarVisible(Boolean(settings.sidebarCollapsed));
+    }
+
+    function setSidebarVisible(visible) {
+      settings.sidebarCollapsed = !visible;
       applySidebarCollapsed();
       debouncedSave();
-      setTimeout(resizeRenderer, 260);
     }
 
     function setInspectorVisible(visible) {
       el.body?.classList.toggle("inspector-hidden", !visible);
       document.getElementById("btnOpenInspector")?.setAttribute("aria-pressed", String(visible));
+      document.getElementById("btnOpenSettingsCapsule")?.setAttribute("aria-pressed", String(visible));
     }
 
     function toggleViewportFocus() {
@@ -5630,7 +6119,7 @@
       }
 
       if (key === "cameraMode") {
-        createCamera(settings.cameraMode);
+        ensureCameraProjection(settings.cameraMode);
         updateCameraModeButtons();
         setView("iso");
       }
@@ -5766,9 +6255,105 @@
       el.toast._timer = setTimeout(() => el.toast.classList.remove("show"), 1600);
     }
 
+    function bindAppDialog() {
+      if (!el.dialogLayer || el.dialogLayer.dataset.bound === "true") return;
+      el.dialogLayer.dataset.bound = "true";
+      el.dialogCancel?.addEventListener("click", () => finishAppDialog(false));
+      el.dialogConfirm?.addEventListener("click", () => finishAppDialog(true));
+      el.dialogInput?.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          finishAppDialog(true);
+        }
+      });
+      window.addEventListener("keydown", event => {
+        if (el.dialogLayer?.hidden) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          finishAppDialog(false);
+        }
+      });
+    }
+
+    function showAppDialog({
+      type = "message",
+      title = "DEM Studio",
+      message = "",
+      defaultValue = "",
+      confirmText = "确定",
+      cancelText = "取消",
+      danger = false
+    } = {}) {
+      if (!el.dialogLayer) return Promise.resolve(type === "prompt" ? "" : false);
+      if (dialogRequest) finishAppDialog(false);
+
+      el.dialogTitle.textContent = title;
+      el.dialogMessage.textContent = message;
+      el.dialogInputWrap.hidden = type !== "prompt";
+      el.dialogInput.value = type === "prompt" ? defaultValue : "";
+      el.dialogConfirm.textContent = confirmText;
+      el.dialogConfirm.classList.toggle("danger", danger);
+      el.dialogCancel.hidden = cancelText == null;
+      el.dialogCancel.textContent = cancelText || "";
+      el.dialogLayer.hidden = false;
+      const previousFocus = document.activeElement;
+
+      return new Promise(resolve => {
+        dialogRequest = { resolve, type, previousFocus };
+        requestAnimationFrame(() => {
+          el.dialogLayer.classList.add("open");
+          if (type === "prompt") {
+            el.dialogInput.focus();
+            el.dialogInput.select();
+          } else {
+            el.dialogConfirm.focus();
+          }
+        });
+      });
+    }
+
+    function finishAppDialog(confirmed) {
+      if (!dialogRequest) return;
+      const request = dialogRequest;
+      dialogRequest = null;
+      const value = request.type === "prompt"
+        ? (confirmed ? el.dialogInput.value : "")
+        : Boolean(confirmed);
+      el.dialogLayer.classList.remove("open");
+      setTimeout(() => {
+        el.dialogLayer.hidden = true;
+        request.previousFocus?.focus?.();
+      }, 180);
+      request.resolve(value);
+    }
+
+    async function importTextureWithDesktopDialog() {
+      const coreApi = lensApi?.core || window.lens?.core;
+      if (!coreApi?.openTexture) {
+        await showAppDialog({
+          title: "桌面文件服务不可用",
+          message: "无法打开贴图选择器。请重新启动 DEM Studio 后再试。",
+          confirmText: "知道了",
+          cancelText: null
+        });
+        return;
+      }
+      try {
+        const file = await coreApi.openTexture();
+        if (file) await loadCustomTextureFile(file);
+      } catch (error) {
+        console.error("Texture import failed", error);
+        await showAppDialog({
+          title: "贴图导入失败",
+          message: error?.message || String(error),
+          confirmText: "关闭",
+          cancelText: null
+        });
+      }
+    }
+
     function setImportBusy(isBusy) {
       importBusy = Boolean(isBusy);
-      el.fileInput && (el.fileInput.disabled = importBusy);
       el.dropzone?.classList.toggle("busy", importBusy);
       ["btnImport", "emptyImport"].forEach(id => {
         document.getElementById(id)?.toggleAttribute("disabled", importBusy);
@@ -5794,6 +6379,34 @@
     function findPrimaryImportFile(files) {
       const supported = new Set(["tif", "tiff", "hgt", "asc", "png", "jpg", "jpeg", "webp"]);
       return files.find(file => supported.has(String(file.name || "").split(".").pop().toLowerCase())) || null;
+    }
+
+    async function adoptParsedDataset(parsed, source = {}) {
+      dataset = normalizeDataset(parsed);
+      dataset.sourcePath = source.sourcePath || parsed.sourcePath || dataset.sourcePath || null;
+      dataset.sourcePaths = Array.isArray(source.sourcePaths || parsed.sourcePaths)
+        ? [...(source.sourcePaths || parsed.sourcePaths)]
+        : (dataset.sourcePath ? [dataset.sourcePath] : []);
+      const titlebarDocument = document.getElementById("titlebarDocument");
+      if (titlebarDocument) titlebarDocument.textContent = dataset.name;
+      datasetRevision++;
+      geoTiffPreviewFingerprint = "";
+      geoTiffPreviewStale = false;
+      enhancedHeightCache = null;
+      addRecentFile({
+        name: dataset.name,
+        size: Number(source.size || 0),
+        lastModified: Date.now(),
+        sourcePath: dataset.sourcePath,
+        sourcePaths: dataset.sourcePaths
+      });
+      setStatus(`正在生成预览网格：${formatNumber(dataset.width)} × ${formatNumber(dataset.height)} ...`);
+      await buildTerrain();
+      updateGeoInfo();
+      updateGeoTiffPreviewStatusUI();
+      fitCamera();
+      setStatus(`Rust Core · 导入完成：${dataset.name} · ${dataset.type} · ${formatNumber(dataset.width)} × ${formatNumber(dataset.height)}`, "ok");
+      toast("地形已生成");
     }
 
     async function loadFile(file, companionFiles = [file]) {
@@ -6717,6 +7330,8 @@
           geo: raw.geo || null,
           coreId: raw.coreId || null,
           engine: raw.engine,
+          sourcePath: raw.sourcePath || null,
+          sourcePaths: Array.isArray(raw.sourcePaths) ? [...raw.sourcePaths] : [],
           heightmapColorWarning: Boolean(raw.heightmapColorWarning)
         };
       }
@@ -6752,6 +7367,8 @@
         noData: raw.noData,
         noDataCount,
         geo: raw.geo || null,
+        sourcePath: raw.sourcePath || null,
+        sourcePaths: Array.isArray(raw.sourcePaths) ? [...raw.sourcePaths] : [],
         heightmapColorWarning: Boolean(raw.heightmapColorWarning)
       };
     }
@@ -7935,7 +8552,17 @@
       }
     }
 
-    function clearCustomTexture() {
+    async function clearCustomTexture() {
+      if (customTexture || settings.customTextureDataUrl) {
+        const confirmed = await showAppDialog({
+          type: "confirm",
+          title: "移除自定义贴图",
+          message: "地形几何不会受到影响，可以随时重新导入贴图。",
+          confirmText: "移除",
+          danger: true
+        });
+        if (!confirmed) return;
+      }
       disposeCustomTextureResources();
       textureRelightGeneration++;
       clearTimeout(textureRelightTimer);
@@ -7964,14 +8591,14 @@
 
     function setCameraMode(mode) {
       if (!VALID_CAMERA_MODES.has(mode)) return;
-      if (settings.cameraMode === mode) {
+      if (settings.cameraMode === mode && cameraProjectionMode() === mode) {
         updateCameraModeButtons();
         return;
       }
       settings.cameraMode = mode;
       const select = document.querySelector('[data-key="cameraMode"]');
       if (select) select.value = mode;
-      createCamera(mode);
+      ensureCameraProjection(mode);
       setView("iso");
       updateCameraModeButtons();
       debouncedSave();
@@ -7979,8 +8606,15 @@
     }
 
     function updateCameraModeButtons() {
+      const actualMode = cameraProjectionMode();
+      if (actualMode && settings.cameraMode !== actualMode) {
+        settings.cameraMode = actualMode;
+        const select = document.querySelector('[data-key="cameraMode"]');
+        if (select) select.value = actualMode;
+      }
       document.querySelectorAll("[data-camera-mode]").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.cameraMode === settings.cameraMode);
+        btn.classList.toggle("active", btn.dataset.cameraMode === (actualMode || settings.cameraMode));
+        btn.setAttribute("aria-pressed", String(btn.dataset.cameraMode === (actualMode || settings.cameraMode)));
       });
     }
 
@@ -8007,6 +8641,7 @@
 
     function setView(view) {
       if (!camera || !controls) return;
+      ensureCameraProjection(settings.cameraMode);
 
       const target = new THREE.Vector3(0, settings.heightScale * 0.35, 0);
       const distance = 6.5 + settings.heightScale * 0.22;
@@ -8031,7 +8666,15 @@
       syncZoomLabel();
     }
 
-    function restoreDefaults() {
+    async function restoreDefaults() {
+      const confirmed = await showAppDialog({
+        type: "confirm",
+        title: "恢复默认参数",
+        message: "当前渲染、材质、视角和导出参数将恢复为默认值。",
+        confirmText: "恢复",
+        danger: true
+      });
+      if (!confirmed) return;
       settings = { ...DEFAULT_SETTINGS };
       disposeCustomTextureResources();
       customTexture = null;

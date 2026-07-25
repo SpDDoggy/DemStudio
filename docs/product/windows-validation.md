@@ -1,6 +1,6 @@
 # Windows 验证记录
 
-- 日期：2026-07-24
+- 日期：2026-07-25
 - 系统：Windows 11 x64
 - WebView2：150.0.4078.83
 - Rust：1.96.0
@@ -18,7 +18,7 @@
 - Tauri Store、Dialog/FS 兼容层在页面中可用。
 - Three.js 创建两个 Canvas。
 - 示例地形正常渲染。
-- ASC 4 × 4 样本通过文件输入、解析和地形重建。
+- ASC 4 × 4 样本通过 Tauri 路径读取、Rust 解析和地形重建。
 - 页面启动状态无错误。
 - Lens 设置和 5 条最近文件记录迁入独立版 Store。
 - WebView2 Crashpad 未生成崩溃报告。
@@ -34,20 +34,27 @@
 - 运行时生成 439 字节测试 GeoTIFF，字节序和 TIFF 魔数正确。
 - 无边框标题栏高度为 52 px，系统窗口 API 可调用。
 - Fluent 工作区通过 1440 × 900 截图检查。
+- 产品源码中不存在浏览器 `alert`、`confirm`、`prompt` 或文件输入；提示、确认和命名操作使用 DEM Studio 对话框。
+- DEM 与纹理导入使用 Tauri 桌面文件选择器；读取权限收窄为用户选择的单文件。
+- 最近文件保存源路径并可通过 Rust Core 直接重开；旧版无路径记录会进入应用内提示。
+- 分辨率、顶点数和显示模式已并入资源卡片。
+- 左右卡片收起为具名胶囊，运行时验证收起状态并完成 1440 × 900 视觉检查。
+- 世界坐标网格随镜头移动并按距离、视线夹角渐隐，运行时确认使用无限网格着色器。
+- 正交与透视切换同时验证设置值、真实相机类型和按钮状态，状态不一致时自动重建相机。
 
 ## 构建产物
 
 ### 独立 EXE
 
 - 路径：`src-tauri/target/release/dem-studio.exe`
-- 大小：12,874,240 bytes
-- SHA-256：`71E0BC005828DCBD6D2898FFD5350F6EC641A9CB2EF1A6878CFEE9361685E0BC`
+- 大小：12,882,944 bytes
+- SHA-256：`8543A823464A6ACB6F9E39708C37ED9C0456E55C33D1710B20F7D78F89888BD2`
 
 ### NSIS 安装包
 
 - 路径：`src-tauri/target/release/bundle/nsis/DEM Studio_0.12.1_x64-setup.exe`
-- 大小：3,420,472 bytes
-- SHA-256：`05275B7ECEA72F3FC506DB95FEBCB93054DE54F24222E54A1FE5B2B482E30446`
+- 大小：3,431,728 bytes
+- SHA-256：`178ECBCAA89AB9AD5AA8B3EF229DCC9911CAD2E81DD2DA234D45FC2F50EFAE7A`
 
 ## 尚未通过
 

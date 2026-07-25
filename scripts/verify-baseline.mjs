@@ -5,6 +5,9 @@ const bridge = await readFile(new URL("../src/host-bridge.js", import.meta.url),
 const tauriConfig = JSON.parse(
   await readFile(new URL("../src-tauri/tauri.conf.json", import.meta.url), "utf8")
 );
+const capability = JSON.parse(
+  await readFile(new URL("../src-tauri/capabilities/default.json", import.meta.url), "utf8")
+);
 
 const checks = [
   ["host bridge is imported", html.includes('import "./src/host-bridge.js";')],
@@ -18,6 +21,13 @@ const checks = [
   ["Rust GeoTIFF export is wired", bridge.includes('invoke("encode_geotiff"') && html.includes("coreApi.encodeGeoTiff")],
   ["Fluent frameless shell exists", html.includes('class="titlebar"') && html.includes('id="windowClose"')],
   ["reference workspace composition exists", html.includes('class="viewport-expand"') && html.includes("viewport-focused")],
+  ["browser dialogs and file inputs are absent", !/<input[^>]+type=["']file["']/i.test(html) && !/\b(?:alert|confirm|prompt)\s*\(/.test(html)],
+  ["in-app dialog system exists", html.includes('id="appDialogLayer"') && html.includes("showAppDialog")],
+  ["recent files can reopen source paths", bridge.includes("openDemPath") && html.includes("openRecentFile") && html.includes("companionPaths")],
+  ["texture import uses Tauri file access", bridge.includes("openTexture") && capability.permissions.includes("fs:allow-read-file")],
+  ["floating panels expose capsules", html.includes('id="btnOpenResources"') && html.includes('id="btnOpenSettingsCapsule"')],
+  ["infinite fading grid shader exists", html.includes("createInfiniteGrid") && html.includes("uFadeStart") && !html.includes("new THREE.GridHelper")],
+  ["camera projection self-reconciles", html.includes("ensureCameraProjection") && html.includes("cameraProjectionMode")],
   [
     "Linux AppImage square icon is declared",
     Array.isArray(tauriConfig.bundle?.icon)

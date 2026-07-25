@@ -23,22 +23,25 @@ The product mark is the existing DEM Studio terrain glyph. It must be used as an
 - Spacing: 4 px base unit; primary intervals are 4, 8, 12, 16 and 24 px
 - Geometry: 8 px control radius, 15 px command-island radius and 20 px panel radius
 - Elevation: hairline borders plus soft, low-contrast floating-island shadows
-- Motion: 100–200 ms, `cubic-bezier(.1,.9,.2,1)`, with reduced-motion support
+- Motion: 100–220 ms, `cubic-bezier(.1,.9,.2,1)`, with reduced-motion support
 - Window chrome: custom 52 px draggable title bar with native minimize, maximize/restore and close actions
 
 ## Workspace composition
 
 - Window commands: detached brand/import and save/export islands over the 52 px drag region.
 - Terrain stage: full-window light canvas with grid; it remains the primary visual layer at every desktop size.
-- Resource island: 292 px target width for import, current scene and recent files.
-- Telemetry island: compact dataset HUD separated from the resource browser.
-- Inspector island: 324 px target width, dismissible without resizing the canvas and recoverable from the footer.
+- Resource island: 292 px target width for import, current scene, dataset telemetry and recent files.
+- Inspector island: 324 px target width, dismissible without resizing the canvas.
+- Resource and inspector islands collapse through scale, clip-path and blur into named edge capsules; the capsules are the only restore controls.
+- The stage grid is generated in world space, follows the camera and fades by distance and grazing angle so no finite boundary is visible.
 - Camera controls remain centered at the bottom; runtime status and secondary actions use separate edge anchors.
 
 ## Interaction rules
 
 - Primary actions use the accent color; selection and focus use a subtle accent tint.
 - Acrylic-like translucency is reserved for transient overlays and floating viewport controls.
+- Prompts, confirmations and application notices use the DEM Studio dialog layer. Browser `alert`, `confirm`, `prompt` and browser file inputs are forbidden.
+- File selection uses the Tauri desktop picker; transient product decisions remain in the application dialog layer.
 - Surfaces use hierarchy rather than decorative gradients.
 - UI copy is limited to labels, values, commands, and operational status.
 - Explanatory text belongs in external documentation, not the product interface.

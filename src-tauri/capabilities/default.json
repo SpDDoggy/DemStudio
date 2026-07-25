@@ -11,6 +11,7 @@
     "core:window:allow-toggle-maximize",
     "dialog:allow-open",
     "dialog:allow-save",
+    "fs:allow-read-file",
     "fs:allow-write-file",
     "store:default"
   ]

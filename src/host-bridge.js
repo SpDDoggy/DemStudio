@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { open, save } from "@tauri-apps/plugin-dialog";
-import { writeFile } from "@tauri-apps/plugin-fs";
+import { readFile, writeFile } from "@tauri-apps/plugin-fs";
 import { load } from "@tauri-apps/plugin-store";
 
 const STORE_FILE = "dem-studio.json";
@@ -101,12 +101,68 @@ async function openDem() {
   if (!primary) {
     return { paths };
   }
-  return invoke("parse_dem_path", {
+  const parsed = await invoke("parse_dem_path", {
     request: {
       path: primary,
       companionPaths: paths.filter(path => path !== primary)
     }
   });
+  return {
+    ...parsed,
+    sourcePath: primary,
+    sourcePaths: paths
+  };
+}
+
+async function openDemPath(path, companionPaths = []) {
+  if (!path) throw new Error("Missing DEM source path.");
+  const parsed = await invoke("parse_dem_path", {
+    request: {
+      path,
+      companionPaths: Array.isArray(companionPaths)
+        ? companionPaths.filter(item => item && item !== path)
+        : []
+    }
+  });
+  return {
+    ...parsed,
+    sourcePath: path,
+    sourcePaths: [path, ...(Array.isArray(companionPaths) ? companionPaths.filter(item => item && item !== path) : [])]
+  };
+}
+
+function fileNameFromPath(path) {
+  return String(path || "").split(/[\\/]/).pop() || "texture";
+}
+
+function textureMime(path) {
+  const ext = pathExtension(path);
+  if (ext === "png") return "image/png";
+  if (ext === "webp") return "image/webp";
+  return "image/jpeg";
+}
+
+async function openTexture() {
+  const selected = await open({
+    title: "导入地形贴图",
+    multiple: false,
+    directory: false,
+    filters: [{
+      name: "地形贴图",
+      extensions: ["png", "jpg", "jpeg", "webp"]
+    }]
+  });
+  if (!selected || Array.isArray(selected)) return null;
+  const bytes = await readFile(selected);
+  const file = new File([bytes], fileNameFromPath(selected), {
+    type: textureMime(selected),
+    lastModified: Date.now()
+  });
+  Object.defineProperty(file, "sourcePath", {
+    value: selected,
+    enumerable: true
+  });
+  return file;
 }
 
 async function sampleDem(coreId, options) {
@@ -156,6 +212,8 @@ window.lens = {
   core: {
     parseDem,
     openDem,
+    openDemPath,
+    openTexture,
     sampleDem,
     encodeGeoTiff
   },
