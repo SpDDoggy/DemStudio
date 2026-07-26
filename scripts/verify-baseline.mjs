@@ -32,6 +32,7 @@ const checks = [
   ["browser dialogs and file inputs are absent", !/<input[^>]+type=["']file["']/i.test(html) && !/\b(?:alert|confirm|prompt)\s*\(/.test(html)],
   ["in-app dialog system exists", html.includes('id="appDialogLayer"') && html.includes("showAppDialog")],
   ["recent files can reopen source paths", bridge.includes("openDemPath") && html.includes("openRecentFile") && html.includes("companionPaths")],
+  ["image heightmaps use the desktop path bridge", bridge.includes("IMAGE_HEIGHTMAP_EXTENSIONS") && bridge.includes('kind: "image-heightmap"') && html.includes("adoptOpenedDataset") && html.includes("parseImageHeightmap")],
   ["texture import uses Tauri file access", bridge.includes("openTexture") && capability.permissions.includes("fs:allow-read-file")],
   ["floating panels expose capsules", html.includes('id="btnOpenResources"') && html.includes('id="btnOpenSettingsCapsule"')],
   ["infinite fading grid shader exists", html.includes("createInfiniteGrid") && html.includes("uFadeStart") && !html.includes("new THREE.GridHelper")],

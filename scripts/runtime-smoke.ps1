@@ -2,7 +2,12 @@ param(
     [string]$Executable = (Join-Path $PSScriptRoot "..\src-tauri\target\debug\dem-studio.exe"),
     [string]$Screenshot = (Join-Path $PSScriptRoot "..\runtime-smoke.png"),
     [string]$Fixture = (Join-Path $PSScriptRoot "..\tests\fixtures\smoke-terrain.asc"),
-    [int]$DebugPort = 9333
+    [int]$DebugPort = 9333,
+    [switch]$NativeImportDialog,
+    [string]$ExpectedName = "smoke-terrain.asc",
+    [string]$ExpectedType = "ASCII Grid",
+    [string]$ExpectedSizePattern = "^4\s+\D\s+4$",
+    [switch]$ExpectBrowserImage
 )
 
 $ErrorActionPreference = "Stop"
@@ -54,6 +59,37 @@ function Invoke-Cdp {
     }
 
     throw "CDP connection closed before response $Id."
+}
+
+if ($NativeImportDialog) {
+    Add-Type -AssemblyName UIAutomationClient
+    Add-Type -AssemblyName UIAutomationTypes
+    Add-Type @'
+using System;
+using System.Runtime.InteropServices;
+
+public static class DemStudioNativeImport {
+    [DllImport("user32.dll")]
+    public static extern IntPtr GetLastActivePopup(IntPtr hWnd);
+
+    [DllImport("user32.dll")]
+    public static extern bool IsWindowVisible(IntPtr hWnd);
+
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    private static extern IntPtr SendMessage(IntPtr hWnd, uint message, IntPtr wParam, string lParam);
+
+    [DllImport("user32.dll")]
+    private static extern IntPtr SendMessage(IntPtr hWnd, uint message, IntPtr wParam, IntPtr lParam);
+
+    public static void SetControlText(IntPtr hWnd, string value) {
+        SendMessage(hWnd, 0x000C, IntPtr.Zero, value);
+    }
+
+    public static void ClickButton(IntPtr hWnd) {
+        SendMessage(hWnd, 0x00F5, IntPtr.Zero, IntPtr.Zero);
+    }
+}
+'@
 }
 
 $resolvedExecutable = [System.IO.Path]::GetFullPath($Executable)
@@ -165,17 +201,93 @@ JSON.stringify({
         throw "Runtime smoke assertions failed."
     }
 
-    $fixtureJson = [System.IO.Path]::GetFullPath($Fixture) | ConvertTo-Json -Compress
-    $openResult = Invoke-Cdp -Socket $socket -Id 4 -Method "Runtime.evaluate" -Params @{
-        expression = "(async () => { await window.__demStudioOpenPath($fixtureJson); return true; })()"
-        awaitPromise = $true
-        returnByValue = $true
+    $resolvedFixture = [System.IO.Path]::GetFullPath($Fixture)
+    if ($NativeImportDialog) {
+        $buttonResult = Invoke-Cdp -Socket $socket -Id 4 -Method "Runtime.evaluate" -Params @{
+            expression = @'
+(() => {
+  const rect = document.getElementById("btnImport")?.getBoundingClientRect();
+  return rect ? JSON.stringify({ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }) : null;
+})()
+'@
+            returnByValue = $true
+        }
+        $buttonPoint = $buttonResult.result.result.value | ConvertFrom-Json
+        if (-not $buttonPoint) {
+            throw "Import button was not found."
+        }
+        Invoke-Cdp -Socket $socket -Id 5 -Method "Input.dispatchMouseEvent" -Params @{
+            type = "mousePressed"
+            x = $buttonPoint.x
+            y = $buttonPoint.y
+            button = "left"
+            clickCount = 1
+        } | Out-Null
+        Invoke-Cdp -Socket $socket -Id 6 -Method "Input.dispatchMouseEvent" -Params @{
+            type = "mouseReleased"
+            x = $buttonPoint.x
+            y = $buttonPoint.y
+            button = "left"
+            clickCount = 1
+        } | Out-Null
+
+        $popup = [IntPtr]::Zero
+        for ($attempt = 0; $attempt -lt 40; $attempt += 1) {
+            Start-Sleep -Milliseconds 250
+            $process.Refresh()
+            $candidate = [DemStudioNativeImport]::GetLastActivePopup($process.MainWindowHandle)
+            if ($candidate -ne [IntPtr]::Zero -and
+                $candidate -ne $process.MainWindowHandle -and
+                [DemStudioNativeImport]::IsWindowVisible($candidate)) {
+                $popup = $candidate
+                break
+            }
+        }
+        if ($popup -eq [IntPtr]::Zero) {
+            throw "Native DEM import dialog did not open from the visible button."
+        }
+        $dialogRoot = [System.Windows.Automation.AutomationElement]::FromHandle($popup)
+        $allDialogElements = $dialogRoot.FindAll(
+            [System.Windows.Automation.TreeScope]::Descendants,
+            [System.Windows.Automation.Condition]::TrueCondition
+        )
+        $fileNameElement = $allDialogElements | Where-Object {
+            $_.Current.AutomationId -eq "1148" -and $_.Current.ClassName -eq "Edit"
+        } | Select-Object -First 1
+        $openElement = $allDialogElements | Where-Object {
+            $_.Current.AutomationId -eq "1" -and $_.Current.ClassName -eq "Button"
+        } | Select-Object -First 1
+        if (-not $fileNameElement -or -not $openElement) {
+            throw "Native DEM import dialog controls could not be resolved."
+        }
+        [DemStudioNativeImport]::SetControlText(
+            [IntPtr]$fileNameElement.Current.NativeWindowHandle,
+            $resolvedFixture
+        )
+        [DemStudioNativeImport]::ClickButton(
+            [IntPtr]$openElement.Current.NativeWindowHandle
+        )
     }
-    if ($openResult.result.exceptionDetails) {
-        throw ($openResult.result.exceptionDetails.text)
+    else {
+        $fixtureJson = $resolvedFixture | ConvertTo-Json -Compress
+        $openResult = Invoke-Cdp -Socket $socket -Id 4 -Method "Runtime.evaluate" -Params @{
+            expression = "(async () => { await window.__demStudioOpenPath($fixtureJson); return true; })()"
+            awaitPromise = $true
+            returnByValue = $true
+        }
+        if ($openResult.result.exceptionDetails) {
+            throw ($openResult.result.exceptionDetails.text)
+        }
     }
 
     $importState = $null
+    $escapedExpectedName = [Regex]::Escape($ExpectedName)
+    $statusPattern = if ($ExpectBrowserImage) {
+        $escapedExpectedName
+    }
+    else {
+        "^Rust Core .*$escapedExpectedName"
+    }
     for ($attempt = 0; $attempt -lt 40; $attempt += 1) {
         Start-Sleep -Milliseconds 250
         $importResult = Invoke-Cdp -Socket $socket -Id (10 + $attempt) -Method "Runtime.evaluate" -Params @{
@@ -184,30 +296,33 @@ JSON.stringify({
   status: document.getElementById("importStatus")?.textContent ?? null,
   name: document.getElementById("mName")?.textContent ?? null,
   type: document.getElementById("mType")?.textContent ?? null,
-  size: document.getElementById("mSize")?.textContent ?? null
+  size: document.getElementById("mSize")?.textContent ?? null,
+  terrainReady: document.getElementById("emptyState")?.classList.contains("hidden") ?? false
 })
 '@
             returnByValue = $true
         }
         $importState = $importResult.result.result.value | ConvertFrom-Json
-        if ($importState.status -match "^Rust Core .*smoke-terrain\.asc") {
+        if ($importState.status -match $statusPattern) {
             break
         }
     }
 
     $importState | ConvertTo-Json -Compress
     $importChecks = [ordered]@{
-        status = $importState.status -match "^Rust Core .*smoke-terrain\.asc"
-        name = $importState.name -eq "smoke-terrain.asc"
-        type = $importState.type -eq "ASCII Grid"
-        size = $importState.size -match "^4\s+\D\s+4$"
+        status = $importState.status -match $statusPattern
+        name = $importState.name -eq $ExpectedName
+        type = $importState.type -eq $ExpectedType
+        size = $importState.size -match $ExpectedSizePattern
+        terrainReady = [bool]$importState.terrainReady
     }
     $importChecks | ConvertTo-Json -Compress
     $importPassed =
         $importChecks.status -and
         $importChecks.name -and
         $importChecks.type -and
-        $importChecks.size
+        $importChecks.size -and
+        $importChecks.terrainReady
     if (-not $importPassed) {
         throw "ASC import smoke assertions failed."
     }

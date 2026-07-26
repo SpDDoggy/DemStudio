@@ -5024,18 +5024,21 @@
             setStatus(dataset ? `当前：${dataset.name}` : "等待导入文件。");
             return;
           }
-          if (!parsed.engine) {
-            throw new Error("没有找到可解析的 DEM 文件。");
-          }
-          await adoptParsedDataset(parsed, {
+          await adoptOpenedDataset(parsed, {
             sourcePath: parsed.sourcePath,
             sourcePaths: parsed.sourcePaths,
-            size: 0
-          });
+            size: Number(parsed.file?.size || 0)
+          }, false);
         } catch (error) {
           console.error(error);
           setStatus(error.message || String(error) || "导入失败。", "error");
           toast("导入失败");
+          await showAppDialog({
+            title: "DEM 导入失败",
+            message: error?.message || String(error) || "无法读取所选文件。",
+            confirmText: "关闭",
+            cancelText: null
+          });
         } finally {
           setImportBusy(false);
         }
@@ -5113,12 +5116,12 @@
         if (!coreApi?.openDemPath) {
           throw new Error("DEM Core path import is unavailable.");
         }
-        const parsed = await coreApi.openDemPath(path, []);
-        await adoptParsedDataset(parsed, {
+        const opened = await coreApi.openDemPath(path, []);
+        await adoptOpenedDataset(opened, {
           sourcePath: path,
           sourcePaths: [path],
-          size: 0
-        });
+          size: Number(opened.file?.size || 0)
+        }, true);
       };
 
       window.__demStudioHarness = Object.freeze({
@@ -5760,12 +5763,12 @@
       setImportBusy(true);
       try {
         setStatus(`正在重新打开：${item.name} ...`);
-        const parsed = await coreApi.openDemPath(item.path, item.companionPaths || []);
-        await adoptParsedDataset(parsed, {
+        const opened = await coreApi.openDemPath(item.path, item.companionPaths || []);
+        await adoptOpenedDataset(opened, {
           sourcePath: item.path,
           sourcePaths: [item.path, ...(item.companionPaths || [])],
           size: item.size || 0
-        });
+        }, false);
       } catch (error) {
         console.error("Open recent file failed", error);
         setStatus(`无法打开最近文件：${item.name}`, "error");
@@ -6286,13 +6289,24 @@
       toast("地形已生成");
     }
 
-    async function loadFile(file, companionFiles = [file]) {
-      if (importBusy) {
+    async function adoptOpenedDataset(opened, source = {}, manageBusy = false) {
+      if (opened?.kind === "image-heightmap" && opened.file) {
+        await loadFile(opened.file, [opened.file], manageBusy);
+        return;
+      }
+      if (!opened?.engine) {
+        throw new Error("没有找到可解析的 DEM 文件。");
+      }
+      await adoptParsedDataset(opened, source);
+    }
+
+    async function loadFile(file, companionFiles = [file], manageBusy = true) {
+      if (manageBusy && importBusy) {
         toast("正在导入，请稍候");
         return;
       }
 
-      setImportBusy(true);
+      if (manageBusy) setImportBusy(true);
       try {
         const ext = file.name.split(".").pop().toLowerCase();
         const kind = getFileKindLabel(ext);
@@ -6337,8 +6351,9 @@
         console.error(err);
         setStatus(err.message || "导入失败。", "error");
         toast("导入失败");
+        throw err;
       } finally {
-        setImportBusy(false);
+        if (manageBusy) setImportBusy(false);
       }
     }
 
@@ -7136,6 +7151,8 @@
         height,
         data,
         noData: null,
+        sourcePath: file.sourcePath || null,
+        sourcePaths: Array.isArray(file.sourcePaths) ? [...file.sourcePaths] : [],
         heightmapColorWarning: visiblePixels > 0 && colorfulPixels / visiblePixels > 0.12
       };
     }

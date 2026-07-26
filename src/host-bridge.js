@@ -85,6 +85,39 @@ function pathExtension(path) {
   return String(path || "").split(/[\\/]/).pop().split(".").pop().toLowerCase();
 }
 
+const CORE_DEM_EXTENSIONS = new Set(["tif", "tiff", "hgt", "asc"]);
+const IMAGE_HEIGHTMAP_EXTENSIONS = new Set(["png", "jpg", "jpeg", "webp"]);
+
+function fileNameFromPath(path) {
+  return String(path || "").split(/[\\/]/).pop() || "terrain";
+}
+
+function imageMime(path) {
+  const ext = pathExtension(path);
+  if (ext === "png") return "image/png";
+  if (ext === "webp") return "image/webp";
+  return "image/jpeg";
+}
+
+async function imageFileFromPath(path, sourcePaths = [path]) {
+  const bytes = await readFile(path);
+  const file = new File([bytes], fileNameFromPath(path), {
+    type: imageMime(path),
+    lastModified: Date.now()
+  });
+  Object.defineProperties(file, {
+    sourcePath: {
+      value: path,
+      enumerable: true
+    },
+    sourcePaths: {
+      value: [...sourcePaths],
+      enumerable: true
+    }
+  });
+  return file;
+}
+
 async function openDem() {
   const selected = await open({
     title: "导入 DEM",
@@ -97,9 +130,20 @@ async function openDem() {
   });
   if (!selected) return null;
   const paths = Array.isArray(selected) ? selected : [selected];
-  const primary = paths.find(path => ["tif", "tiff", "hgt", "asc"].includes(pathExtension(path)));
+  const primary = paths.find(path => {
+    const ext = pathExtension(path);
+    return CORE_DEM_EXTENSIONS.has(ext) || IMAGE_HEIGHTMAP_EXTENSIONS.has(ext);
+  });
   if (!primary) {
     return { paths };
+  }
+  if (IMAGE_HEIGHTMAP_EXTENSIONS.has(pathExtension(primary))) {
+    return {
+      kind: "image-heightmap",
+      file: await imageFileFromPath(primary, paths),
+      sourcePath: primary,
+      sourcePaths: paths
+    };
   }
   const parsed = await invoke("parse_dem_path", {
     request: {
@@ -116,6 +160,18 @@ async function openDem() {
 
 async function openDemPath(path, companionPaths = []) {
   if (!path) throw new Error("Missing DEM source path.");
+  const sourcePaths = [
+    path,
+    ...(Array.isArray(companionPaths) ? companionPaths.filter(item => item && item !== path) : [])
+  ];
+  if (IMAGE_HEIGHTMAP_EXTENSIONS.has(pathExtension(path))) {
+    return {
+      kind: "image-heightmap",
+      file: await imageFileFromPath(path, sourcePaths),
+      sourcePath: path,
+      sourcePaths
+    };
+  }
   const parsed = await invoke("parse_dem_path", {
     request: {
       path,
@@ -127,19 +183,8 @@ async function openDemPath(path, companionPaths = []) {
   return {
     ...parsed,
     sourcePath: path,
-    sourcePaths: [path, ...(Array.isArray(companionPaths) ? companionPaths.filter(item => item && item !== path) : [])]
+    sourcePaths
   };
-}
-
-function fileNameFromPath(path) {
-  return String(path || "").split(/[\\/]/).pop() || "texture";
-}
-
-function textureMime(path) {
-  const ext = pathExtension(path);
-  if (ext === "png") return "image/png";
-  if (ext === "webp") return "image/webp";
-  return "image/jpeg";
 }
 
 async function openTexture() {
@@ -153,16 +198,7 @@ async function openTexture() {
     }]
   });
   if (!selected || Array.isArray(selected)) return null;
-  const bytes = await readFile(selected);
-  const file = new File([bytes], fileNameFromPath(selected), {
-    type: textureMime(selected),
-    lastModified: Date.now()
-  });
-  Object.defineProperty(file, "sourcePath", {
-    value: selected,
-    enumerable: true
-  });
-  return file;
+  return imageFileFromPath(selected, [selected]);
 }
 
 async function sampleDem(coreId, options) {
