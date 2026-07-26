@@ -24,13 +24,13 @@ The product mark is the existing DEM Studio terrain glyph. It must be used as an
 - Geometry: 8 px control radius, 15 px command-island radius and 20 px panel radius
 - Elevation: hairline borders plus soft, low-contrast floating-island shadows
 - Motion: 100–220 ms, `cubic-bezier(.1,.9,.2,1)`, with reduced-motion support
-- Window chrome: custom 52 px draggable title bar with native minimize, maximize/restore and close actions
+- Window chrome: fully transparent, unblurred 52 px drag region with three circular minimize, maximize/restore and close actions
 
 ## Workspace composition
 
 - Window commands: detached brand/import and save/export islands over the 52 px drag region.
 - Terrain stage: full-window light canvas with grid; it remains the primary visual layer at every desktop size.
-- Resource island: 292 px target width for import, current scene, dataset telemetry and recent files.
+- Resource island: 292 px target width for current scene, dataset telemetry and recent files; DEM import has one canonical entry in the brand command island.
 - Inspector island: 324 px target width, dismissible without resizing the canvas.
 - Resource and inspector islands collapse through scale, clip-path and blur into named edge capsules; the capsules are the only restore controls.
 - The stage grid is generated in world space, follows the camera and fades by distance and grazing angle so no finite boundary is visible.

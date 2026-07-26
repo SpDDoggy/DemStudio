@@ -1,6 +1,6 @@
 # Windows 验证记录
 
-- 日期：2026-07-25
+- 日期：2026-07-26
 - 系统：Windows 11 x64
 - WebView2：150.0.4078.83
 - Rust：1.96.0
@@ -41,20 +41,24 @@
 - 左右卡片收起为具名胶囊，运行时验证收起状态并完成 1440 × 900 视觉检查。
 - 世界坐标网格随镜头移动并按距离、视线夹角渐隐，运行时确认使用无限网格着色器。
 - 正交与透视切换同时验证设置值、真实相机类型和按钮状态，状态不一致时自动重建相机。
+- 资源面板不存在与顶部“导入 DEM”重复的导入入口。
+- 标题栏计算样式为完全透明、无 `backdrop-filter`，52 px 拖拽区域仍可接收指针事件。
+- 最小化、最大化/还原和关闭为三枚 28 × 28 px 圆形按钮，右上功能岛无遮挡。
+- Windows Release EXE 的 PE Subsystem 为 `WINDOWS_GUI (2)`，启动时不创建控制台窗口。
 
 ## 构建产物
 
 ### 独立 EXE
 
 - 路径：`src-tauri/target/release/dem-studio.exe`
-- 大小：12,882,944 bytes
-- SHA-256：`8543A823464A6ACB6F9E39708C37ED9C0456E55C33D1710B20F7D78F89888BD2`
+- 大小：12,548,096 bytes
+- SHA-256：`2C80C23C616B144F73D6432D1EB396D389F95EF0668CEA7D02A0C06385989436`
 
 ### NSIS 安装包
 
 - 路径：`src-tauri/target/release/bundle/nsis/DEM Studio_0.12.1_x64-setup.exe`
-- 大小：3,431,728 bytes
-- SHA-256：`178ECBCAA89AB9AD5AA8B3EF229DCC9911CAD2E81DD2DA234D45FC2F50EFAE7A`
+- 大小：3,092,180 bytes
+- SHA-256：`4C65AEC7A47820A688329EE409D262ABE74C5660D6340E8167AC58B1A224B40F`
 
 ## 尚未通过
 

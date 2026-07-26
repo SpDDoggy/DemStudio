@@ -2407,7 +2407,9 @@
       display: block;
       border: 0;
       background: transparent;
-      pointer-events: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      pointer-events: auto;
     }
 
     .titlebar-brand {
@@ -2490,24 +2492,64 @@
     .window-controls {
       position: absolute;
       z-index: 2;
-      top: 0;
-      right: 0;
+      top: 10px;
+      right: 14px;
       height: 42px;
       display: flex;
+      align-items: center;
+      gap: 8px;
       pointer-events: auto;
     }
 
     .caption-button {
-      width: 48px;
-      height: 42px;
+      width: 28px;
+      height: 28px;
+      border: 1px solid rgba(74, 96, 126, .18);
+      border-radius: 50%;
       color: #24334a;
+      background: rgba(255, 255, 255, .42);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .72),
+        0 2px 6px rgba(49, 70, 98, .07);
+      font-size: 11px;
+      transition:
+        color 120ms ease,
+        background-color 120ms ease,
+        border-color 120ms ease,
+        transform 120ms ease,
+        box-shadow 120ms ease;
+    }
+
+    .caption-button:hover {
+      border-color: rgba(74, 96, 126, .28);
+      background: rgba(255, 255, 255, .78);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .88),
+        0 4px 10px rgba(49, 70, 98, .10);
+      transform: translateY(-1px);
+    }
+
+    .caption-button:active {
+      background: rgba(226, 234, 244, .90);
+      box-shadow: inset 0 1px 3px rgba(49, 70, 98, .14);
+      transform: translateY(0) scale(.94);
+    }
+
+    .caption-button.close:hover {
+      border-color: #d94c4c;
+      color: #fff;
+      background: #df5656;
+    }
+
+    .caption-button.close:active {
+      background: #c93f3f;
     }
 
     .topbar {
       position: absolute;
-      z-index: 29;
+      z-index: 31;
       top: 38px;
-      right: 82px;
+      right: 128px;
       width: auto;
       height: 56px;
       min-height: 56px;
@@ -3403,13 +3445,6 @@
         <button class="sidebar-toggle" id="btnToggleSidebar" type="button" title="收起资源面板">−</button>
         <section class="card">
           <h2>资源</h2>
-          <div class="dropzone" id="dropzone">
-            <div>
-              <div class="drop-icon"><img src="./assets/icon.svg" alt="" /></div>
-              <strong>DEM</strong>
-              <span class="drop-action-label">添加 DEM 或影像</span>
-            </div>
-          </div>
           <div class="statusline" id="importStatus" style="margin-top:10px;">等待导入文件。</div>
         </section>
 
@@ -4633,7 +4668,6 @@
       sidebar: document.getElementById("leftSidebar"),
       sidebarToggle: document.getElementById("btnToggleSidebar"),
       viewport: document.getElementById("viewport"),
-      dropzone: document.getElementById("dropzone"),
       importStatus: document.getElementById("importStatus"),
       emptyState: document.getElementById("emptyState"),
       subtitle: document.getElementById("subtitle"),
@@ -5092,26 +5126,6 @@
         if (!event.target.closest(".window-controls")) {
           document.getElementById("windowMaximize")?.click();
         }
-      });
-
-      ["dragenter", "dragover"].forEach(type => {
-        el.dropzone?.addEventListener(type, (event) => {
-          event.preventDefault();
-          el.dropzone.classList.add("drag");
-        });
-      });
-
-      ["dragleave", "drop"].forEach(type => {
-        el.dropzone?.addEventListener(type, (event) => {
-          event.preventDefault();
-          el.dropzone.classList.remove("drag");
-        });
-      });
-
-      el.dropzone?.addEventListener("drop", async (event) => {
-        const files = Array.from(event.dataTransfer?.files || []);
-        const file = findPrimaryImportFile(files);
-        if (file) await loadFile(file, files);
       });
 
       const triggerImport = async () => {
@@ -6354,7 +6368,6 @@
 
     function setImportBusy(isBusy) {
       importBusy = Boolean(isBusy);
-      el.dropzone?.classList.toggle("busy", importBusy);
       ["btnImport", "emptyImport"].forEach(id => {
         document.getElementById(id)?.toggleAttribute("disabled", importBusy);
       });

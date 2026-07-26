@@ -104,6 +104,16 @@ JSON.stringify({
   coreExport: typeof window.lens?.core?.encodeGeoTiff,
   windowMinimize: typeof window.lens?.window?.minimize,
   titlebarHeight: Math.round(document.getElementById("titlebar")?.getBoundingClientRect().height ?? 0),
+  titlebarBackground: getComputedStyle(document.getElementById("titlebar")).backgroundColor,
+  titlebarBackdrop: getComputedStyle(document.getElementById("titlebar")).backdropFilter,
+  titlebarPointerEvents: getComputedStyle(document.getElementById("titlebar")).pointerEvents,
+  duplicateImportAction: Boolean(document.getElementById("dropzone")),
+  circularWindowControls: Array.from(document.querySelectorAll(".caption-button")).length === 3
+    && Array.from(document.querySelectorAll(".caption-button")).every(button => {
+      const rect = button.getBoundingClientRect();
+      return Math.abs(rect.width - rect.height) < 1
+        && getComputedStyle(button).borderRadius === "50%";
+    }),
   canvasCount: document.querySelectorAll("canvas").length,
   browserFileInputs: document.querySelectorAll('input[type="file"]').length,
   appDialog: Boolean(document.getElementById("appDialogLayer")),
@@ -136,6 +146,11 @@ JSON.stringify({
         $state.coreExport -ne "function" -or
         $state.windowMinimize -ne "function" -or
         $state.titlebarHeight -ne 52 -or
+        $state.titlebarBackground -ne "rgba(0, 0, 0, 0)" -or
+        $state.titlebarBackdrop -ne "none" -or
+        $state.titlebarPointerEvents -ne "auto" -or
+        $state.duplicateImportAction -or
+        -not $state.circularWindowControls -or
         $state.canvasCount -lt 1 -or
         $state.browserFileInputs -ne 0 -or
         -not $state.appDialog -or

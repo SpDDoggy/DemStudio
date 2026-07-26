@@ -8,6 +8,7 @@ const tauriConfig = JSON.parse(
 const capability = JSON.parse(
   await readFile(new URL("../src-tauri/capabilities/default.json", import.meta.url), "utf8")
 );
+const tauriMain = await readFile(new URL("../src-tauri/src/main.rs", import.meta.url), "utf8");
 
 const checks = [
   ["host bridge is imported", html.includes('import "./src/host-bridge.js";')],
@@ -20,7 +21,11 @@ const checks = [
   ["Rust terrain sampling is wired", bridge.includes('invoke("sample_dem"') && html.includes("coreApi.sampleDem")],
   ["Rust GeoTIFF export is wired", bridge.includes('invoke("encode_geotiff"') && html.includes("coreApi.encodeGeoTiff")],
   ["Fluent frameless shell exists", html.includes('class="titlebar"') && html.includes('id="windowClose"')],
+  ["Windows GUI subsystem hides the console window", tauriMain.includes('windows_subsystem = "windows"')],
   ["reference workspace composition exists", html.includes('class="viewport-expand"') && html.includes("viewport-focused")],
+  ["resource panel has no duplicate import action", !html.includes('id="dropzone"') && !html.includes("添加 DEM 或影像")],
+  ["transparent titlebar has no retained blur", /[.]titlebar\s*\{[^}]*background:\s*transparent;[^}]*backdrop-filter:\s*none;/s.test(html)],
+  ["window controls are three circular buttons", (html.match(/class="caption-button(?: close)?"/g) || []).length === 3 && html.includes("border-radius: 50%")],
   ["browser dialogs and file inputs are absent", !/<input[^>]+type=["']file["']/i.test(html) && !/\b(?:alert|confirm|prompt)\s*\(/.test(html)],
   ["in-app dialog system exists", html.includes('id="appDialogLayer"') && html.includes("showAppDialog")],
   ["recent files can reopen source paths", bridge.includes("openDemPath") && html.includes("openRecentFile") && html.includes("companionPaths")],
