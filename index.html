@@ -2545,39 +2545,6 @@
       background: #c93f3f;
     }
 
-    .topbar {
-      position: absolute;
-      z-index: 31;
-      top: 38px;
-      right: 128px;
-      width: auto;
-      height: 56px;
-      min-height: 56px;
-      margin: 0;
-      padding: 8px;
-      border: 1px solid var(--island-stroke);
-      border-radius: 15px;
-      background: var(--island-bg);
-      box-shadow: var(--island-shadow);
-      backdrop-filter: blur(30px) saturate(135%);
-    }
-
-    .command-context,
-    .actions #btnDemo {
-      display: none;
-    }
-
-    .actions {
-      gap: 8px;
-    }
-
-    .actions .btn {
-      height: 38px;
-      padding-inline: 17px;
-      border-radius: 9px;
-    }
-
-    .actions .btn::after,
     .titlebar-brand .btn::after {
       content: "⌄";
       margin-left: 9px;
@@ -3005,71 +2972,6 @@
       width: 96px;
     }
 
-    .workspace-footer {
-      position: absolute;
-      z-index: 10;
-      right: 24px;
-      bottom: 24px;
-      left: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      pointer-events: none;
-    }
-
-    .runtime-pill,
-    .footer-actions {
-      display: flex;
-      align-items: center;
-      pointer-events: auto;
-    }
-
-    .runtime-pill {
-      gap: 13px;
-      height: 34px;
-      padding: 0 13px;
-      border: 1px solid var(--island-stroke);
-      border-radius: 12px;
-      color: #53627a;
-      background: rgba(255, 255, 255, .74);
-      box-shadow: 0 6px 18px rgba(57, 76, 104, .07);
-      backdrop-filter: blur(22px);
-      font-size: 10px;
-    }
-
-    .runtime-pill strong {
-      color: #499a6c;
-      font-weight: 650;
-    }
-
-    .runtime-pill strong::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      display: inline-block;
-      margin-right: 6px;
-      border-radius: 50%;
-      background: #58b77d;
-    }
-
-    .footer-actions {
-      gap: 8px;
-    }
-
-    .footer-action {
-      height: 34px;
-      padding: 0 11px;
-      border: 0;
-      border-radius: 9px;
-      color: #52627b;
-      background: transparent;
-      font-size: 11px;
-    }
-
-    .footer-action:hover {
-      background: rgba(255, 255, 255, .64);
-    }
-
     .body.sidebar-collapsed .sidebar,
     .body.viewport-focused .sidebar {
       visibility: visible;
@@ -3428,18 +3330,6 @@
         <button class="caption-button close" id="windowClose" type="button" aria-label="关闭" title="关闭">×</button>
       </div>
     </header>
-    <header class="topbar">
-      <div class="command-context">
-        <strong>地图工作区</strong>
-        <span id="subtitle">就绪</span>
-      </div>
-      <div class="actions">
-        <button class="btn ghost" id="btnDemo">示例地形</button>
-        <button class="btn" id="btnSavePreset">保存预设</button>
-        <button class="btn primary" id="btnExport">导出 PNG</button>
-      </div>
-    </header>
-
     <main class="body" id="appBody">
       <aside class="sidebar" id="leftSidebar">
         <button class="sidebar-toggle" id="btnToggleSidebar" type="button" title="收起资源面板">−</button>
@@ -4101,16 +3991,6 @@
         <span>地形设置</span>
       </button>
 
-      <div class="workspace-footer">
-        <div class="runtime-pill">
-          <strong id="runtimeStatus">GPU Ready</strong>
-          <span id="fpsStatus">— FPS</span>
-        </div>
-        <div class="footer-actions">
-          <button class="footer-action" id="btnHelp" type="button">帮助</button>
-          <button class="footer-action" id="btnOpenInspector" type="button">设置</button>
-        </div>
-      </div>
     </main>
 
     <div class="preview-overlay" id="geoTiffPreviewOverlay" hidden>
@@ -4670,7 +4550,6 @@
       viewport: document.getElementById("viewport"),
       importStatus: document.getElementById("importStatus"),
       emptyState: document.getElementById("emptyState"),
-      subtitle: document.getElementById("subtitle"),
       toast: document.getElementById("toast"),
       recentList: document.getElementById("recentList"),
       zoomRange: document.getElementById("zoomRange"),
@@ -4706,8 +4585,6 @@
       geoTiffPreviewBack: document.getElementById("btnGeoTiffPreviewBack"),
       geoTiffPreviewCancel: document.getElementById("btnGeoTiffPreviewCancel"),
       geoTiffPreviewConfirm: document.getElementById("btnGeoTiffPreviewConfirm"),
-      runtimeStatus: document.getElementById("runtimeStatus"),
-      fpsStatus: document.getElementById("fpsStatus"),
       dialogLayer: document.getElementById("appDialogLayer"),
       dialogTitle: document.getElementById("appDialogTitle"),
       dialogMessage: document.getElementById("appDialogMessage"),
@@ -5166,13 +5043,10 @@
       document.getElementById("emptyImport")?.addEventListener("click", triggerImport);
       document.getElementById("emptyDemo")?.addEventListener("click", () => createDemoTerrain(true));
       document.getElementById("btnImport")?.addEventListener("click", triggerImport);
-      document.getElementById("btnDemo")?.addEventListener("click", () => createDemoTerrain(true));
       document.getElementById("btnResetCameraBottom")?.addEventListener("click", () => setView("iso"));
-      document.getElementById("btnExport")?.addEventListener("click", handleExport);
       document.getElementById("btnExportPanel")?.addEventListener("click", handleExport);
       el.geoTiffPreviewButton?.addEventListener("click", previewGeoTIFF);
       el.geoTiffExportButton?.addEventListener("click", () => exportGeoTIFF());
-      document.getElementById("btnSavePreset")?.addEventListener("click", saveCurrentPreset);
       document.getElementById("btnSavePresetPanel")?.addEventListener("click", saveCurrentPreset);
       document.getElementById("btnApplyPreset")?.addEventListener("click", () => applyPreset(el.presetSelect?.value));
       document.getElementById("btnDeletePreset")?.addEventListener("click", deleteSelectedPreset);
@@ -5182,11 +5056,9 @@
       document.getElementById("btnClearRecent")?.addEventListener("click", clearRecentFiles);
       document.getElementById("btnViewportExpand")?.addEventListener("click", toggleViewportFocus);
       document.getElementById("btnCloseInspector")?.addEventListener("click", () => setInspectorVisible(false));
-      document.getElementById("btnOpenInspector")?.addEventListener("click", () => setInspectorVisible(true));
       document.getElementById("btnOpenSettingsCapsule")?.addEventListener("click", () => setInspectorVisible(true));
       document.getElementById("btnOpenResources")?.addEventListener("click", () => setSidebarVisible(true));
       document.querySelector(".scene-menu")?.addEventListener("click", () => setInspectorVisible(true));
-      document.getElementById("btnHelp")?.addEventListener("click", () => toast("拖入 DEM，调整参数后即可导出"));
       el.sidebarToggle?.addEventListener("click", toggleSidebar);
       document.getElementById("zoomOut")?.addEventListener("click", () => setZoom((Number(el.zoomRange?.value || 100) - 10)));
       document.getElementById("zoomIn")?.addEventListener("click", () => setZoom((Number(el.zoomRange?.value || 100) + 10)));
@@ -5237,11 +5109,14 @@
       };
 
       window.__demStudioOpenPath = async path => {
-        await openRecentFile({
-          id: String(path),
-          name: String(path).split(/[\\/]/).pop() || "DEM",
-          path,
-          companionPaths: [],
+        const coreApi = lensApi?.core || window.lens?.core;
+        if (!coreApi?.openDemPath) {
+          throw new Error("DEM Core path import is unavailable.");
+        }
+        const parsed = await coreApi.openDemPath(path, []);
+        await adoptParsedDataset(parsed, {
+          sourcePath: path,
+          sourcePaths: [path],
           size: 0
         });
       };
@@ -5974,7 +5849,6 @@
 
     function setInspectorVisible(visible) {
       el.body?.classList.toggle("inspector-hidden", !visible);
-      document.getElementById("btnOpenInspector")?.setAttribute("aria-pressed", String(visible));
       document.getElementById("btnOpenSettingsCapsule")?.setAttribute("aria-pressed", String(visible));
     }
 
@@ -6211,16 +6085,6 @@
             : "导出 PNG";
       }
 
-      const headerButton = document.getElementById("btnExport");
-      if (headerButton) {
-        headerButton.textContent = format === "geotiff"
-          ? "导出 GeoTIFF"
-          : format === "png+world"
-            ? "导出 PNG + World"
-            : format === "tif+world"
-              ? "导出 TIFF + World"
-              : "导出 PNG";
-      }
       updateGeoTiffPreviewStatusUI();
     }
 
@@ -6375,7 +6239,7 @@
 
     function setExportBusy(isBusy) {
       exportBusy = Boolean(isBusy);
-      ["btnExport", "btnExportPanel", "btnGeoTiffPreview", "btnGeoTiffExport"].forEach(id => {
+      ["btnExportPanel", "btnGeoTiffPreview", "btnGeoTiffExport"].forEach(id => {
         document.getElementById(id)?.toggleAttribute("disabled", exportBusy);
       });
       updateGeoTiffPreviewStatusUI();
@@ -8490,7 +8354,6 @@
       el.mRange.textContent = `${formatElevation(dataset.min)} – ${formatElevation(dataset.max)}`;
       el.mNoData.textContent = `${formatNumber(dataset.noDataCount)} (${noDataPct.toFixed(2)}%)`;
       el.mMesh.textContent = `${sampled.cols} × ${sampled.rows}`;
-      el.subtitle.textContent = `${dataset.name} · ${dataset.type} · ${dataset.width}×${dataset.height}`;
       updateGeoInfo();
       applyEnvironment();
     }
@@ -8704,22 +8567,11 @@
     function startRenderLoop() {
       if (running) return;
       running = true;
-      let fpsFrames = 0;
-      let fpsStartedAt = performance.now();
-      if (el.runtimeStatus) el.runtimeStatus.textContent = "GPU Ready";
       const animate = () => {
         if (!running) return;
         raf = requestAnimationFrame(animate);
         controls?.update();
         renderFrame();
-        fpsFrames++;
-        const now = performance.now();
-        const elapsed = now - fpsStartedAt;
-        if (elapsed >= 1000) {
-          if (el.fpsStatus) el.fpsStatus.textContent = `${Math.round(fpsFrames * 1000 / elapsed)} FPS`;
-          fpsFrames = 0;
-          fpsStartedAt = now;
-        }
       };
       animate();
     }

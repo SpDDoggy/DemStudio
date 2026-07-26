@@ -1,6 +1,6 @@
 # Windows 验证记录
 
-- 日期：2026-07-26
+- 日期：2026-07-27
 - 系统：Windows 11 x64
 - WebView2：150.0.4078.83
 - Rust：1.96.0
@@ -45,20 +45,24 @@
 - 标题栏计算样式为完全透明、无 `backdrop-filter`，52 px 拖拽区域仍可接收指针事件。
 - 最小化、最大化/还原和关闭为三枚 28 × 28 px 圆形按钮，右上功能岛无遮挡。
 - Windows Release EXE 的 PE Subsystem 为 `WINDOWS_GUI (2)`，启动时不创建控制台窗口。
+- 顶部重复的保存/导出功能岛已移除，地形设置内的“保存当前”和导出入口保持可用。
+- 左下 GPU/FPS 状态与右下帮助/设置操作已移除，运行时不再执行无展示用途的 FPS 统计。
+- 运行时断言确认重复功能岛和工作区页脚不存在，同时面板保存/导出节点存在。
+- ASC 冒烟入口改为异常直通，只有出现 `Rust Core` 导入完成状态才允许通过。
 
 ## 构建产物
 
 ### 独立 EXE
 
 - 路径：`src-tauri/target/release/dem-studio.exe`
-- 大小：12,548,096 bytes
-- SHA-256：`2C80C23C616B144F73D6432D1EB396D389F95EF0668CEA7D02A0C06385989436`
+- 大小：12,547,072 bytes
+- SHA-256：`5B0A206165F7CEB907F3EFB3D3A4DAAEE7CF0289C89C361794543DA77C4B90A5`
 
 ### NSIS 安装包
 
 - 路径：`src-tauri/target/release/bundle/nsis/DEM Studio_0.12.1_x64-setup.exe`
-- 大小：3,092,180 bytes
-- SHA-256：`4C65AEC7A47820A688329EE409D262ABE74C5660D6340E8167AC58B1A224B40F`
+- 大小：3,089,507 bytes
+- SHA-256：`B76E1F408C4B068E7C3860FD04EFBEE475F77ADE638A8516C4E0934C6D9A50AC`
 
 ## 尚未通过
 

@@ -28,13 +28,13 @@ The product mark is the existing DEM Studio terrain glyph. It must be used as an
 
 ## Workspace composition
 
-- Window commands: detached brand/import and save/export islands over the 52 px drag region.
+- Window commands: one detached brand/import island over the 52 px drag region; save and export remain canonical inspector actions.
 - Terrain stage: full-window light canvas with grid; it remains the primary visual layer at every desktop size.
 - Resource island: 292 px target width for current scene, dataset telemetry and recent files; DEM import has one canonical entry in the brand command island.
 - Inspector island: 324 px target width, dismissible without resizing the canvas.
 - Resource and inspector islands collapse through scale, clip-path and blur into named edge capsules; the capsules are the only restore controls.
 - The stage grid is generated in world space, follows the camera and fades by distance and grazing angle so no finite boundary is visible.
-- Camera controls remain centered at the bottom; runtime status and secondary actions use separate edge anchors.
+- Camera controls remain centered at the bottom; no persistent status or secondary-action footer competes with the terrain stage.
 
 ## Interaction rules
 

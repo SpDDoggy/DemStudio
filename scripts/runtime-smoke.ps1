@@ -108,6 +108,9 @@ JSON.stringify({
   titlebarBackdrop: getComputedStyle(document.getElementById("titlebar")).backdropFilter,
   titlebarPointerEvents: getComputedStyle(document.getElementById("titlebar")).pointerEvents,
   duplicateImportAction: Boolean(document.getElementById("dropzone")),
+  duplicateHeaderActions: Boolean(document.getElementById("btnSavePreset") || document.getElementById("btnExport")),
+  workspaceFooter: Boolean(document.querySelector(".workspace-footer")),
+  panelSaveExport: Boolean(document.getElementById("btnSavePresetPanel") && document.getElementById("btnExportPanel")),
   circularWindowControls: Array.from(document.querySelectorAll(".caption-button")).length === 3
     && Array.from(document.querySelectorAll(".caption-button")).every(button => {
       const rect = button.getBoundingClientRect();
@@ -150,6 +153,9 @@ JSON.stringify({
         $state.titlebarBackdrop -ne "none" -or
         $state.titlebarPointerEvents -ne "auto" -or
         $state.duplicateImportAction -or
+        $state.duplicateHeaderActions -or
+        $state.workspaceFooter -or
+        -not $state.panelSaveExport -or
         -not $state.circularWindowControls -or
         $state.canvasCount -lt 1 -or
         $state.browserFileInputs -ne 0 -or
@@ -184,16 +190,25 @@ JSON.stringify({
             returnByValue = $true
         }
         $importState = $importResult.result.result.value | ConvertFrom-Json
-        if ($importState.status -match "smoke-terrain\.asc") {
+        if ($importState.status -match "^Rust Core .*smoke-terrain\.asc") {
             break
         }
     }
 
     $importState | ConvertTo-Json -Compress
-    if ($importState.status -notmatch "smoke-terrain\.asc" -or
-        $importState.name -ne "smoke-terrain.asc" -or
-        $importState.type -ne "ASCII Grid" -or
-        $importState.size -notmatch "^4\s+\D\s+4$") {
+    $importChecks = [ordered]@{
+        status = $importState.status -match "^Rust Core .*smoke-terrain\.asc"
+        name = $importState.name -eq "smoke-terrain.asc"
+        type = $importState.type -eq "ASCII Grid"
+        size = $importState.size -match "^4\s+\D\s+4$"
+    }
+    $importChecks | ConvertTo-Json -Compress
+    $importPassed =
+        $importChecks.status -and
+        $importChecks.name -and
+        $importChecks.type -and
+        $importChecks.size
+    if (-not $importPassed) {
         throw "ASC import smoke assertions failed."
     }
 
