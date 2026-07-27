@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1200" height="400" viewBox="0 0 1200 400"
+     role="img" aria-labelledby="title desc">
+  <title id="title">DEM Studio</title>
+  <desc id="desc">本地优先的桌面地形可视化与 DEM 渲染工作区，从栅格数据经过 Rust Core 处理后生成可交互的 Three.js 地形。</desc>
+
+  <defs>
+    <linearGradient id="stage" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#e8f1fb"/>
+    </linearGradient>
+    <clipPath id="canvas">
+      <rect width="1200" height="400" rx="28"/>
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#canvas)">
+    <rect width="1200" height="400" fill="url(#stage)"/>
+    <path d="M0 316 230 258 430 298 650 230 865 276 1200 178V400H0Z" fill="#dceafb"/>
+    <path d="M0 344 214 286 420 326 658 258 874 302 1200 206" fill="none" stroke="#b5cce8" stroke-width="2"/>
+    <path d="M0 374 202 316 408 356 666 288 886 330 1200 236" fill="none" stroke="#c6d8ed" stroke-width="2"/>
+
+    <g transform="translate(58 48)">
+      <rect width="54" height="54" rx="14" fill="#172033"/>
+      <path d="M26 8 15 30l-4-4S1 45 3 45h48L40 24l-3 2-6-3-3 3-4-4-7 4-5 4-4-4S1 45 3 45h48L40 24l-3 2-6-3-3 3-4-4-7 4-5 4-4-4Z"
+            fill="#93c5fd"/>
+      <path d="M26 8 15 30l-4-4" fill="none" stroke="#f8fafc" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="74" y="18" fill="#0f6cda" font-size="18" font-weight="700"
+            font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
+            letter-spacing="2">DESKTOP TERRAIN WORKSPACE</text>
+      <text x="0" y="118" fill="#172033" font-size="68" font-weight="760"
+            font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Display', 'Segoe UI', 'PingFang SC', sans-serif">DEM Studio</text>
+      <text x="2" y="164" fill="#334155" font-size="27" font-weight="520"
+            font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI', 'PingFang SC', sans-serif">在本机把高程数据变成可交互、可导出的三维地形</text>
+
+      <g transform="translate(0 205)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="18" font-weight="650">
+        <rect width="128" height="38" rx="19" fill="#ffffff" stroke="#bfd2e8"/>
+        <text x="64" y="25" text-anchor="middle" fill="#334155">LOCAL-FIRST</text>
+        <rect x="140" width="104" height="38" rx="19" fill="#ffffff" stroke="#bfd2e8"/>
+        <text x="192" y="25" text-anchor="middle" fill="#334155">TAURI 2</text>
+        <rect x="256" width="122" height="38" rx="19" fill="#ffffff" stroke="#bfd2e8"/>
+        <text x="317" y="25" text-anchor="middle" fill="#334155">RUST CORE</text>
+      </g>
+    </g>
+
+    <g transform="translate(726 42)">
+      <path d="M230 20 422 128 230 236 38 128Z" fill="#f8fbff" stroke="#8eb6e2" stroke-width="2"/>
+      <path d="M230 58 372 138 230 218 88 138Z" fill="#dbeafe" stroke="#60a5fa" stroke-width="2"/>
+      <path d="M230 90 330 146 230 202 130 146Z" fill="#bfdbfe" stroke="#0f6cda" stroke-width="3"/>
+      <path d="M230 128 286 158 230 190 174 158Z" fill="#0f6cda"/>
+      <path d="M38 128v34l192 108 192-108v-34L230 236Z" fill="#b9cee7" opacity=".75"/>
+      <path d="M88 138v28l142 80 142-80v-28L230 218Z" fill="#95bce8" opacity=".75"/>
+      <path d="M130 146v22l100 56 100-56v-22L230 202Z" fill="#60a5fa" opacity=".9"/>
+
+      <g fill="none" stroke="#0f6cda" stroke-width="2" stroke-linecap="round">
+        <path d="M8 292h88"/>
+        <path d="M168 292h92"/>
+        <path d="M330 292h94"/>
+      </g>
+      <g fill="#0f6cda">
+        <circle cx="8" cy="292" r="5"/>
+        <circle cx="168" cy="292" r="5"/>
+        <circle cx="330" cy="292" r="5"/>
+      </g>
+      <g fill="#334155" font-size="18" font-weight="700"
+         font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+        <text x="8" y="322">DEM INPUT</text>
+        <text x="168" y="322">RUST CORE</text>
+        <text x="330" y="322">3D OUTPUT</text>
+      </g>
+    </g>
+  </g>
+</svg>
