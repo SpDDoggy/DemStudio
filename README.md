@@ -20,7 +20,7 @@ DEM Studio 是一款本地优先的桌面地形可视化与 DEM 渲染工具。�
   <img src="./assets/readme/app-preview.png" width="100%" alt="DEM Studio Windows 11 Fluent 工作区，显示已导入的 ASC 地形、资源面板、三维视口和地形设置">
 </p>
 
-<p align="center"><sub>Windows 11 实机运行时冒烟：ASC 样本经 Tauri 路径读取、Rust Core 解析并由 Three.js 完成地形重建。</sub></p>
+<p align="center"><sub>Windows 11 桌面工作区：ASC 样本经 Tauri 路径读取、Rust Core 解析并由 Babylon.js 完成地形重建。</sub></p>
 
 ## 从数据到地形
 
@@ -34,11 +34,11 @@ DEM Studio 是一款本地优先的桌面地形可视化与 DEM 渲染工具。�
 
 DEM Studio 将计算、渲染和桌面能力分成三个清晰边界：
 
-- **Rust DEM Core**：负责 ASC、HGT、GeoTIFF 解码，NoData 处理、统计、网格抽样、平滑与 GeoTIFF 编码。
-- **Three.js / WebGL**：负责场景、材质、相机、实时交互和 GPU 渲染。
+- **Rust DEM Core**：负责 ASC、HGT、GeoTIFF 解码，NoData 处理、统计、文件后备大栅格、二进制预览抽样、原始高程保真与 GeoTIFF 编码。
+- **Babylon.js / WebGPU + WebGL2**：负责统一的场景、PBR 材质、相机、实时交互和 32 帧 TAA 高质量成片 PNG。
 - **Tauri 2**：负责文件访问、系统对话框、设置存储、无边框窗口和跨平台打包。
 
-这让高程语义可以脱离界面独立测试，同时保留现有 WebGL 渲染链的实时表现。完整边界见 [Rust Core 与 Fluent 桌面壳决策](docs/adr/0002-rust-dem-core-and-fluent-shell.md)。
+这让高程语义可以脱离界面独立测试，并让 WebGPU 与 WebGL2 共用同一套地形和材质逻辑。完整边界见 [Babylon.js 与永久地形基座决策](docs/adr/0006-babylon-renderer-and-persistent-terrain-residency.md)。
 
 ## 本地运行
 
@@ -79,7 +79,8 @@ npm run verify:runtime:windows
 
 ```text
 .
-├─ index.html               # DEM Studio 前端与现有渲染逻辑
+├─ index.html               # DEM Studio UI、设置与业务编排
+├─ src/rendering/           # Babylon 运行时、材质适配与地形驻留
 ├─ src/host-bridge.js       # Web 前端与 Tauri / Rust Core 的桥接
 ├─ src-tauri/dem-core/      # 可独立测试的 Rust DEM 核心
 ├─ src-tauri/               # Tauri 宿主、权限与打包配置
@@ -100,7 +101,7 @@ npm run migrate:lens -- "路径/到/db.json"
 
 ## 当前边界与路线
 
-尚待完成的关键验证包括真实 GeoTIFF/HGT/图像高度图回归、自动导出回归、大栅格性能与内存基准、安装升级回归，以及各平台签名和实机验收。
+历史 Windows 证据覆盖真实 GeoTIFF/PNG 高程图与文件后备预览；渲染层现已迁移到 Babylon.js，高质量成片改为 32 帧 TAA 光栅。Babylon Release 实机矩阵、HGT 与跨平台金样集、自动导出回归、大栅格全分辨率增强导出、安装升级回归，以及各平台签名和实机验收仍需分别给出证据。
 
 - 建立跨平台真实样本金样回归
 - 拆分当前单文件前端，形成场景、设置和导出工作流模块
@@ -115,6 +116,7 @@ npm run migrate:lens -- "路径/到/db.json"
 - [迁移契约](docs/product/migration-contract.md)
 - [Tauri 三端架构决策](docs/adr/0001-tauri-cross-platform-host.md)
 - [Rust Core 与 Fluent 桌面壳决策](docs/adr/0002-rust-dem-core-and-fluent-shell.md)
+- [Babylon.js 与永久地形基座决策](docs/adr/0006-babylon-renderer-and-persistent-terrain-residency.md)
 - [Fluent UI / Brand Spec](docs/design/brand-spec.md)
 
 ## 许可证

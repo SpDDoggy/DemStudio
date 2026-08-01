@@ -8,6 +8,13 @@ const STORE_FILE = "dem-studio.json";
 const storePromise = load(STORE_FILE, {
   autoSave: 250
 });
+const demWindowRequests = new Map();
+const cancelledDemWindowRequests = new Set();
+let demWindowRequestSequence = 0;
+let demWindowCancellationCount = 0;
+let demWindowNativeCancellationRequested = 0;
+let demWindowNativeCancellationSucceeded = 0;
+let demWindowNativeCancellationFailed = 0;
 
 function storageKey(pluginId, key) {
   return `${pluginId}:${key}`;
@@ -100,7 +107,14 @@ function imageMime(path) {
 }
 
 async function imageFileFromPath(path, sourcePaths = [path]) {
-  const bytes = await readFile(path);
+  const response = await invoke("read_heightmap_path", { path });
+  const bytes = response instanceof Uint8Array
+    ? response
+    : response instanceof ArrayBuffer
+      ? new Uint8Array(response)
+      : ArrayBuffer.isView(response)
+        ? new Uint8Array(response.buffer, response.byteOffset, response.byteLength)
+        : new Uint8Array(response);
   const file = new File([bytes], fileNameFromPath(path), {
     type: imageMime(path),
     lastModified: Date.now()
@@ -212,6 +226,148 @@ async function sampleDem(coreId, options) {
   });
 }
 
+function parseBinaryTerrainSample(response, engine) {
+  const bytes = response instanceof ArrayBuffer
+    ? new Uint8Array(response)
+    : ArrayBuffer.isView(response)
+      ? new Uint8Array(response.buffer, response.byteOffset, response.byteLength)
+      : new Uint8Array(response);
+  const magic = bytes.byteLength >= 4
+    ? String.fromCharCode(...bytes.subarray(0, 4))
+    : "";
+  if (bytes.byteLength < 16 || !["DMT2", "DMT3"].includes(magic)) {
+    throw new Error("Invalid DEM Core binary sample.");
+  }
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const version = view.getUint16(4, true);
+  const headerSize = view.getUint16(6, true);
+  const cols = view.getUint32(8, true);
+  const rows = view.getUint32(12, true);
+  const valueCount = cols * rows;
+  const maskLength = magic === "DMT3" && headerSize >= 20
+    ? view.getUint32(16, true)
+    : 0;
+  const expectedLength = headerSize + valueCount * 4 + maskLength;
+  if (
+    !((magic === "DMT2" && version === 1) || (magic === "DMT3" && version === 2)) ||
+    headerSize < (magic === "DMT3" ? 20 : 16) ||
+    expectedLength !== bytes.byteLength ||
+    (maskLength !== 0 && maskLength !== valueCount)
+  ) {
+    throw new Error("Unsupported DEM Core binary sample.");
+  }
+  const heights = new Float32Array(valueCount);
+  for (let index = 0; index < valueCount; index += 1) {
+    heights[index] = view.getFloat32(headerSize + index * 4, true);
+  }
+  const validMask = maskLength
+    ? bytes.slice(headerSize + valueCount * 4, expectedLength)
+    : new Uint8Array(valueCount).fill(1);
+  return { cols, rows, heights, validMask, engine };
+}
+
+async function invokeBinarySample(command, coreId, options) {
+  const response = await invoke(command, {
+    request: {
+      coreId,
+      maxDimension: options.maxDimension,
+      noDataFill: options.noDataFill,
+      smoothSteps: options.smoothSteps
+    }
+  });
+  return parseBinaryTerrainSample(response, "rust-dem-core-v3-binary");
+}
+
+async function sampleDemBinary(coreId, options) {
+  return invokeBinarySample("sample_dem_binary", coreId, options);
+}
+
+async function sampleDemOverviewBinary(coreId, options) {
+  return invokeBinarySample("sample_dem_overview_binary", coreId, options);
+}
+
+async function sampleDemWindowBinary(coreId, options) {
+  const requestId = String(
+    options.requestId || `dem-window-${Date.now()}-${++demWindowRequestSequence}`
+  );
+  const cancelledError = () => {
+    const error = new DOMException("DEM window request was cancelled.", "AbortError");
+    Object.defineProperty(error, "requestId", { value: requestId });
+    return error;
+  };
+  if (cancelledDemWindowRequests.has(requestId)) {
+    cancelledDemWindowRequests.delete(requestId);
+    throw cancelledError();
+  }
+  demWindowRequests.set(requestId, {
+    requestId,
+    coreId,
+    startedAt: performance.now()
+  });
+  try {
+    const response = await invoke("sample_dem_window_binary", {
+      request: {
+        coreId,
+        requestId,
+        x: options.x,
+        y: options.y,
+        width: options.width,
+        height: options.height,
+        outputCols: options.outputCols,
+        outputRows: options.outputRows,
+        maxDimension: options.maxDimension,
+        noDataFill: options.noDataFill,
+        smoothSteps: options.smoothSteps
+      }
+    });
+    if (cancelledDemWindowRequests.has(requestId)) throw cancelledError();
+    return parseBinaryTerrainSample(response, "rust-dem-core-v3-window-binary");
+  } finally {
+    demWindowRequests.delete(requestId);
+    cancelledDemWindowRequests.delete(requestId);
+  }
+}
+
+function cancelDemWindowRequest(requestId) {
+  const key = String(requestId || "");
+  if (!key || !demWindowRequests.has(key)) return false;
+  cancelledDemWindowRequests.add(key);
+  demWindowCancellationCount++;
+  demWindowNativeCancellationRequested++;
+  void invoke("cancel_dem_request", { requestId: key })
+    .then(() => {
+      demWindowNativeCancellationSucceeded++;
+    })
+    .catch(error => {
+      demWindowNativeCancellationFailed++;
+      console.warn("Native DEM request cancellation failed", key, error);
+    });
+  return true;
+}
+
+function getDemWindowRequestStats() {
+  return {
+    activeCount: demWindowRequests.size,
+    cancelledCount: demWindowCancellationCount,
+    nativeCancellation: demWindowNativeCancellationSucceeded > 0,
+    nativeCancellationRequested: demWindowNativeCancellationRequested,
+    nativeCancellationSucceeded: demWindowNativeCancellationSucceeded,
+    nativeCancellationFailed: demWindowNativeCancellationFailed,
+    cancellationMode: demWindowNativeCancellationSucceeded > 0
+      ? "native-and-discard"
+      : "native-requested-with-local-discard"
+  };
+}
+
+async function releaseDem(coreId) {
+  if (!coreId) return false;
+  return invoke("release_dem", { coreId });
+}
+
+async function coreStats() {
+  return invoke("core_stats");
+}
+
 async function encodeGeoTiff(width, height, rgba, geo, embedCrs) {
   const sourceTags = geo?.sourceGeoTiffTags || {};
   return invoke("encode_geotiff", {
@@ -251,6 +407,13 @@ window.lens = {
     openDemPath,
     openTexture,
     sampleDem,
+    sampleDemBinary,
+    sampleDemOverviewBinary,
+    sampleDemWindowBinary,
+    cancelDemWindowRequest,
+    getDemWindowRequestStats,
+    releaseDem,
+    coreStats,
     encodeGeoTiff
   },
   window: {

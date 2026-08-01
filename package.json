@@ -8,21 +8,22 @@
     "build:web": "vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "desktop:dev": "tauri dev",
-    "desktop:build": "tauri build",
-    "desktop:build:windows": "tauri build --bundles nsis",
+    "desktop:dev": "tauri dev --config src-tauri/tauri.dev.conf.json",
+    "desktop:build": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-release-exe.ps1",
+    "desktop:build:exe": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-release-exe.ps1",
+    "desktop:build:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-release-exe.ps1 -BundleNsis",
     "desktop:build:smoke:windows": "tauri build --debug --no-bundle --config src-tauri/tauri.smoke.conf.json",
-    "verify": "node scripts/verify-baseline.mjs",
+    "verify": "node scripts/verify-baseline.mjs && node --test tests/terrain-lighting.test.mjs tests/terrain-geometry.test.mjs tests/terrain-residency.test.mjs tests/babylon-vertex-data.test.mjs tests/gypsum-material-policy.test.mjs tests/settings-form-contract.test.mjs tests/studio-environment.test.mjs tests/studio-shadow-frustum.test.mjs",
     "verify:runtime:windows": "npm run desktop:build:smoke:windows && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/runtime-smoke.ps1",
     "migrate:lens": "node scripts/migrate-lens-state.mjs"
   },
   "dependencies": {
+    "@babylonjs/core": "9.18.0",
     "@tauri-apps/api": "^2.0.0",
     "@tauri-apps/plugin-dialog": "^2.0.0",
     "@tauri-apps/plugin-fs": "^2.0.0",
     "@tauri-apps/plugin-store": "^2.0.0",
-    "geotiff": "2.1.3",
-    "three": "0.164.1"
+    "geotiff": "2.1.3"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0",

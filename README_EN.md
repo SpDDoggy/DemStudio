@@ -5,9 +5,9 @@
 [![Desktop CI](https://github.com/SpDDoggy/DemStudio/actions/workflows/desktop-ci.yml/badge.svg)](https://github.com/SpDDoggy/DemStudio/actions/workflows/desktop-ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-DEM Studio is a local-first desktop application for terrain visualization and DEM rendering. It uses Tauri 2 to host a shared Three.js frontend and aims to provide a consistent terrain viewing, adjustment, and export workflow across Windows, macOS, and Linux.
+DEM Studio is a local-first desktop application for terrain visualization and DEM rendering. It uses Tauri 2 with a Babylon.js frontend and aims to provide a consistent terrain viewing, adjustment, and export workflow across Windows, macOS, and Linux.
 
-This version is the standalone product migration of the DEM Studio previously embedded in Lens. DEM parsing, NoData handling, statistics, terrain sampling, and smoothing now live in an independent Rust Core, while Three.js remains responsible for real-time terrain rendering. Tauri provides file access, settings storage, system dialogs, and the frameless window shell. The core workflow does not depend on a CDN.
+This version is the standalone product migration of the DEM Studio previously embedded in Lens. DEM parsing, NoData handling, statistics, terrain sampling, and smoothing live in an independent Rust Core. Babylon.js provides one shared terrain, camera, material, and high-quality raster path across WebGPU and WebGL2. Tauri provides file access, settings storage, system dialogs, and the frameless window shell. The core workflow does not depend on a CDN.
 
 ## Features
 
@@ -66,7 +66,8 @@ Desktop packages must be built on their target operating system. A successful Wi
 
 ```text
 .
-├─ index.html               # DEM Studio frontend and current rendering logic
+├─ index.html               # UI, settings, and workflow orchestration
+├─ src/rendering/           # Babylon runtime, material adapter, and terrain residency
 ├─ src/host-bridge.js       # Bridge between the web UI, Tauri, and Rust Core
 ├─ src-tauri/dem-core/      # Independent Rust DEM core
 ├─ src-tauri/               # Tauri host, permissions, and packaging configuration
