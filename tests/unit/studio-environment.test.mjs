@@ -5,7 +5,7 @@ import {
   averageFaceEnergy,
   createStudioEnvironmentCube,
   STUDIO_ENVIRONMENT_FACE_SIZE,
-} from "../src/studio-environment.js";
+} from "../../src/studio-environment.js";
 
 test("studio cubemap has upper, side, and lower hemisphere energy hierarchy", () => {
   const cube = createStudioEnvironmentCube();

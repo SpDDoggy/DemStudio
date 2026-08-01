@@ -4,7 +4,7 @@
 
 - 模式：Brownfield 清理，先分类、后变更。
 - 当前工作树：`main`，16 个已跟踪文件有修改，66 个未跟踪入口。
-- 本文件只记录整理边界；尚未删除、移动、覆盖或归档既有资产。
+- 已建立重整理前源码快照 `702e39b`，并完成第一批无损证据归档；尚未删除既有资产。
 - 源码、测试、ADR、BUG 记录、验证摘要和现存 EXE 均属于保护对象。
 
 ## 目录事实分类
@@ -14,16 +14,16 @@
 | `.github/` | active | 1 个文件 | Keep | CI 入口 |
 | `assets/` | active | 约 0.34 MiB | Keep | README 与产品视觉资产 |
 | `docs/` | source-of-truth + historical | 31 个文件 | Keep / Mark | ADR、产品验证与接管记录；部分旧接管文档已过时，但不能删除 |
-| `scripts/` | active | 12 个文件 | Keep | 构建、发布与 Harness 入口 |
+| `scripts/` | active | 12 个脚本 | Keep | 已按 build/verify/perf/migration 分组 |
 | `src/` | active | 16 个文件 | Keep | Babylon 渲染与地形逻辑 |
 | `src-tauri/src/`、`src-tauri/dem-core/src/` | source-of-truth | 源码 | Keep | Tauri 宿主与 Rust DEM Core |
-| `tests/` | active | 12 个入口 | Keep | 当前回归契约 |
+| `tests/` | active | 12 个入口 | Keep | 已按 unit/contracts/perf/fixtures 分层 |
 | `node_modules/` | generated | 约 123.83 MiB | Delete candidate | 可由锁文件重建；删除后需重新安装依赖 |
 | `dist/` | generated | 约 5.91 MiB | Delete candidate | 可由 Vite 构建重建 |
 | `src-tauri/target/` | generated + evidence-bearing | 约 14,401.76 MiB | Defer | 含多个与脏工作树对应的 EXE；证据归档前不可直接删除 |
 | `src-tauri/dem-core/target/` | generated | 约 388 MiB | Delete candidate | Rust Core 编译缓存，可重建 |
 | `artifacts/` | supporting + evidence | 911 个文件，约 861.96 MiB | Keep / Index | 多份 ADR 与 BUG 记录直接引用其中证据 |
-| 根目录 12 个 `runtime-*` 目录 | reference + generated evidence | 114 个文件，约 66.54 MiB | Archive candidate | 旧运行时截图与摘要散落根目录；移动会改变记录路径 |
+| `artifacts/runtime/historical/` | reference + generated evidence | 12 个原始目录、114 个文件，约 66.54 MiB | Keep | 已由根目录整体迁入；迁移前后 114 个 SHA-256 一致 |
 | `runtime-smoke.png` | generated | 约 0.67 MiB | Keep | 当前 Harness 默认输出路径 |
 | `.codex-build.*.log` | cache-temp | 约 0.01 MiB | Delete candidate | 已被 `.gitignore` 忽略，且无项目引用 |
 
@@ -42,17 +42,15 @@
 
 ## 推荐执行顺序
 
-1. 稳定：冻结当前源码范围，明确哪一个 EXE 是当前 Release Candidate。
-2. 证据归档：复制需保留的 EXE、对应 summary、截图与源码状态清单到统一证据目录，并生成 SHA-256 清单。
-3. 根目录收口：把 12 个 `runtime-*` 目录整体迁入 `artifacts/legacy-root-runtime/`，同步修正文档引用；保留完整相对目录树。
-4. Git 噪声收口：决定 `artifacts/` 是本地证据还是需要纳入版本库，再修改 `.gitignore`。
-5. 缓存清理：在证据与源码可恢复后，删除明确可重建的 Node、Vite 和 Rust 编译缓存。
-6. 验证：重新检查 Git 状态、引用路径、关键文件哈希和开发/验证入口。
+1. 稳定：重整理前源码范围已冻结为快照 `702e39b`；最终权威 Release Candidate 仍待最新源码重建与验收。
+2. 证据归档：6 个现存 EXE 与匹配 summary 已复制到 `artifacts/release-candidates/2026-08-01/`，来源和边界见 manifest。
+3. 根目录收口：12 个 `runtime-*` 目录已整体迁入 `artifacts/runtime/historical/`，保留完整相对目录树与迁移前哈希。
+4. Git 噪声收口：大型 `artifacts` 作为本地证据；Git 只跟踪索引和 manifests。
+5. 脚本和测试：已分别按 build/verify/perf/migration 与 unit/contracts/perf/fixtures 分组，调用路径已同步。
+6. 验证：Node 66/66、Python 1/1、Rust Core 25/25、Tauri 4/4、Web Production 构建与 Release EXE 静态闸门通过。
+7. 缓存清理：仍需单独确认后才能删除明确可重建的 Node、Vite 和 Rust 编译缓存。
 
 ## 必须单独确认的动作
 
-- 移动根目录 `runtime-*` 证据目录。
-- 修改 `.gitignore` 对 `artifacts/` 和 `runtime-*` 的策略。
 - 删除 `node_modules/`、`dist/`、Rust `target/` 或日志。
 - 选择并归档权威 Release Candidate EXE。
-

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { fitDirectionalShadowFrustum } from "../src/studio-shadow-frustum.js";
+import { fitDirectionalShadowFrustum } from "../../src/studio-shadow-frustum.js";
 
 test("directional shadow fit is finite, ordered, and texel aligned", () => {
   const fit = fitDirectionalShadowFrustum({

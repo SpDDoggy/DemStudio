@@ -1,6 +1,6 @@
 param(
-    [string]$Executable = (Join-Path $PSScriptRoot "..\src-tauri\target\perf\release\dem-studio.exe"),
-    [string]$Fixture = (Join-Path $PSScriptRoot "..\artifacts\perf-fixtures\perf-100m-mountain-f32-deflate-tiled.tif"),
+    [string]$Executable = (Join-Path $PSScriptRoot "..\..\src-tauri\target\perf\release\dem-studio.exe"),
+    [string]$Fixture = (Join-Path $PSScriptRoot "..\..\artifacts\perf-fixtures\perf-100m-mountain-f32-deflate-tiled.tif"),
     [int]$SoakMinutes = 15
 )
 

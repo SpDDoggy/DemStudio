@@ -5,7 +5,7 @@ import {
   DEFAULT_SKY_DIRECTIONS,
   aggregateDirectionalSkyVisibility,
   computeTerrainSkyVisibility,
-} from "../src/terrain-lighting.js";
+} from "../../src/terrain-lighting.js";
 import {
   GYPSUM_LIGHTING_SCHEMES,
   HIGH_KEY_GYPSUM_RESPONSE,
@@ -13,12 +13,12 @@ import {
   deriveGypsumStudioLighting,
   deriveWhiteStudioLighting,
   mapContactOcclusionStrength,
-} from "../src/lighting-profile.js";
+} from "../../src/lighting-profile.js";
 import {
   computeTerrainDetailCurvature,
   computeTerrainNormalLod,
-} from "../src/terrain-normal-lod.js";
-import { StudioLightingRig } from "../src/studio-lighting-rig.js";
+} from "../../src/terrain-normal-lod.js";
+import { StudioLightingRig } from "../../src/studio-lighting-rig.js";
 import {
   ArcRotateCamera,
   DirectionalLight,
@@ -26,7 +26,7 @@ import {
   Scene,
   Vector3,
 } from "@babylonjs/core";
-import { decorateBabylonCamera } from "../src/rendering/babylon-scene-kit.js";
+import { decorateBabylonCamera } from "../../src/rendering/babylon-scene-kit.js";
 
 const westOnly = [
   { azimuthDeg: 270, sourceColStep: -1, sourceRowStep: 0, weight: 1 },

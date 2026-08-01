@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { computeDemGradientNormals } from "../src/terrain-geometry.js";
+import { computeDemGradientNormals } from "../../src/terrain-geometry.js";
 
 test("DEM gradient normals match an analytic plane independently of triangulation", () => {
   const cols = 9;

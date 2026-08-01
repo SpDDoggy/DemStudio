@@ -84,8 +84,15 @@ npm run verify:runtime:windows
 ├─ src/host-bridge.js       # Web 前端与 Tauri / Rust Core 的桥接
 ├─ src-tauri/dem-core/      # 可独立测试的 Rust DEM 核心
 ├─ src-tauri/               # Tauri 宿主、权限与打包配置
-├─ scripts/                 # 基线检查、运行时冒烟与状态迁移
-├─ tests/fixtures/          # 可重复的测试样本
+├─ scripts/build/           # Release 与性能构建入口
+├─ scripts/verify/          # 静态基线、EXE 与运行时验证
+├─ scripts/perf/            # 大栅格样本和性能 Harness
+├─ scripts/migration/       # 状态迁移工具
+├─ tests/unit/              # 地形、光照、材质与驻留单元测试
+├─ tests/contracts/         # 设置与页面契约测试
+├─ tests/perf/              # 性能样本工具测试
+├─ tests/fixtures/          # 可重复的运行时样本
+├─ artifacts/               # 本地证据；Git 只跟踪索引与哈希清单
 └─ docs/                    # 架构决策、迁移契约与发布证据
 ```
 

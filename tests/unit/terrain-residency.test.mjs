@@ -5,7 +5,7 @@ import {
   TerrainResidency,
   enumerateLevelTiles,
   tileCoordinateKey,
-} from "../src/rendering/terrain-residency.js";
+} from "../../src/rendering/terrain-residency.js";
 
 test("1024 quality owns exactly 64 persistent level-3 base tiles", () => {
   const residency = new TerrainResidency({

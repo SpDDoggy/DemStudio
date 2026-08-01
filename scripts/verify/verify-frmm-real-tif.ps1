@@ -5,8 +5,8 @@ param(
         (-join [char[]]@(0x6EC7, 0x5357)) +
         "\FRMM_EarthPrinter_DN_PREC_2024.tif"
     ),
-    [string]$Executable = (Join-Path $PSScriptRoot "..\src-tauri\target\perf\release\dem-studio.exe"),
-    [string]$EvidenceDirectory = (Join-Path $PSScriptRoot "..\artifacts\real-tif-regression"),
+    [string]$Executable = (Join-Path $PSScriptRoot "..\..\src-tauri\target\perf\release\dem-studio.exe"),
+    [string]$EvidenceDirectory = (Join-Path $PSScriptRoot "..\..\artifacts\real-tif-regression"),
     [ValidateSet(1024, 2048, 4096)]
     [int[]]$Dimensions = @(1024, 2048, 4096),
     [switch]$Performance1024,

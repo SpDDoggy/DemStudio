@@ -71,8 +71,15 @@ Desktop packages must be built on their target operating system. A successful Wi
 ├─ src/host-bridge.js       # Bridge between the web UI, Tauri, and Rust Core
 ├─ src-tauri/dem-core/      # Independent Rust DEM core
 ├─ src-tauri/               # Tauri host, permissions, and packaging configuration
-├─ scripts/                 # Baseline checks, runtime smoke test, and state migration
-├─ tests/fixtures/          # Reproducible test fixtures
+├─ scripts/build/           # Release and performance build entry points
+├─ scripts/verify/          # Baseline, executable, and runtime verification
+├─ scripts/perf/            # Large-raster fixtures and performance harnesses
+├─ scripts/migration/       # State migration tools
+├─ tests/unit/              # Terrain, lighting, material, and residency unit tests
+├─ tests/contracts/         # Settings and page contract tests
+├─ tests/perf/              # Performance fixture tool tests
+├─ tests/fixtures/          # Reproducible runtime fixtures
+├─ artifacts/               # Local evidence; Git tracks only indexes and hashes
 └─ docs/                    # Architecture decisions, migration contract, and release evidence
 ```
 

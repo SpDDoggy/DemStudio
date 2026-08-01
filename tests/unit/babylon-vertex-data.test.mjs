@@ -6,8 +6,8 @@ import {
   Color,
   Vector2,
   Vector3,
-} from "../src/rendering/babylon-scene-kit.js";
-import { attachDemTerrainMaterialPlugin } from "../src/rendering/babylon-material-plugin.js";
+} from "../../src/rendering/babylon-scene-kit.js";
+import { attachDemTerrainMaterialPlugin } from "../../src/rendering/babylon-material-plugin.js";
 import { NullEngine } from "@babylonjs/core/Engines/nullEngine.js";
 import { Scene } from "@babylonjs/core/scene.js";
 import { PBRMaterial } from "@babylonjs/core/Materials/PBR/pbrMaterial.js";

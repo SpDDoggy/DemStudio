@@ -1,11 +1,11 @@
 param(
-    [string]$Executable = (Join-Path $PSScriptRoot "..\src-tauri\target\debug\dem-studio.exe"),
-    [string]$Screenshot = (Join-Path $PSScriptRoot "..\runtime-smoke.png"),
+    [string]$Executable = (Join-Path $PSScriptRoot "..\..\src-tauri\target\debug\dem-studio.exe"),
+    [string]$Screenshot = (Join-Path $PSScriptRoot "..\..\runtime-smoke.png"),
     [string]$FocusScreenshot = "",
     [string]$PresetScreenshot = "",
     [string]$PresetCanvasScreenshot = "",
     [string]$LightingAblationDirectory = "",
-    [string]$Fixture = (Join-Path $PSScriptRoot "..\tests\fixtures\smoke-terrain.asc"),
+    [string]$Fixture = (Join-Path $PSScriptRoot "..\..\tests\fixtures\smoke-terrain.asc"),
     [int]$DebugPort = 9457,
     [ValidateSet("", "webgpu", "webgl2")]
     [string]$RendererBackend = "",

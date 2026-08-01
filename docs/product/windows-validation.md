@@ -88,9 +88,9 @@
   生产构建上下文。
 - 生产基础配置已移除 `devUrl`；开发服务器入口隔离到
   `src-tauri/tauri.dev.conf.json`，仅 `desktop:dev` 显式使用。
-- 正式独立 EXE 改由 `scripts/build-release-exe.ps1` 调用 Tauri CLI
+- 正式独立 EXE 改由 `scripts/build/build-release-exe.ps1` 调用 Tauri CLI
   `build --no-bundle` 生成。
-- `scripts/verify-release-exe.ps1` 会拒绝任何仍包含 1420 开发入口的
+- `scripts/verify/verify-release-exe.ps1` 会拒绝任何仍包含 1420 开发入口的
   成品，并要求存在内嵌生产源 `tauri://localhost`。
 - 本机确认端口 1420 无监听后冷启动新 EXE：进程持续存活 8 秒，随后通过
   主窗口正常关闭。
@@ -117,7 +117,7 @@
 - 对话框按钮遵循原生 `hidden` 语义，单操作错误框不会再显示空白次按钮；拒绝值即使是字符串也会进入可读错误信息。
 - 二进制地形采样升级为 DMT3 v2，除高度外携带等长有效区掩膜；Host Bridge 继续兼容 DMT2 v1。根网格和 focus 网格均跳过无效三角形，根网格只沿有效区边界建立侧壁。
 - `nodata-island.asc` 运行时截图确认地形轮廓不再退化为整块矩形；focus 索引 Oracle 改为比较实际有效三角形期望值，允许含 NoData 的窗口被正确验证。
-- 白模实时渲染已改为分层能量结构：单一 Directional 主光建立大形体，低强度环境/半球/面光只补暗部；16-sample GTAO 负责窄沟接触，8 方位 × 5 仰角天空可见度只压间接漫反射，Directional shadow 只保留少量自遮挡与工作室投影。最终证据为 `runtime-lighting-final/all.png` 及同目录六层消融图。
+- 白模实时渲染已改为分层能量结构：单一 Directional 主光建立大形体，低强度环境/半球/面光只补暗部；16-sample GTAO 负责窄沟接触，8 方位 × 5 仰角天空可见度只压间接漫反射，Directional shadow 只保留少量自遮挡与工作室投影。历史最终证据已整体迁入 `artifacts/runtime/historical/runtime-lighting-final/`，其中 `all.png` 及同目录五层消融图保持原始哈希。
 - Harness 会等待天空可见度 worker 真正写回，实切 AO 并断言 GTAO 与 horizon 同时归零/恢复；六种消融结果必须生成六个不同的解码像素签名，防止“文件存在但分层无效”的错误绿灯。
 - 独立视觉 Agent 对最终候选复核为 PASS：主光方向明确，亮坡与背光坡形成体积，沟谷保持可读，左下 shadow acne 已消除；横贯上部的结构经与原始 PNG 对照确认是天然主脊，不是 LOD 接缝。
 - 性能 Harness 不再把静止 WebView RAF 当作渲染 FPS；当前会在交互质量模式下连续驱动真实相机环绕和正交缩放，并同时读取实际 renderFrame 时间与帧间隔。

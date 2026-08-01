@@ -7,8 +7,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[2]
-GENERATOR = ROOT / "scripts" / "generate-perf-fixture.py"
-VERIFIER = ROOT / "scripts" / "verify-perf-fixture.py"
+GENERATOR = ROOT / "scripts" / "perf" / "generate-perf-fixture.py"
+VERIFIER = ROOT / "scripts" / "perf" / "verify-perf-fixture.py"
 
 
 class PerfFixtureToolsTest(unittest.TestCase):

@@ -1,7 +1,7 @@
 param(
-    [string]$Executable = (Join-Path $PSScriptRoot "..\src-tauri\target\perf\release\dem-studio.exe"),
-    [string]$Fixture = (Join-Path $PSScriptRoot "..\artifacts\perf-fixtures\perf-100m-mountain-f32-deflate-tiled.tif"),
-    [string]$EvidenceDirectory = (Join-Path $PSScriptRoot "..\artifacts\perf-evidence"),
+    [string]$Executable = (Join-Path $PSScriptRoot "..\..\src-tauri\target\perf\release\dem-studio.exe"),
+    [string]$Fixture = (Join-Path $PSScriptRoot "..\..\artifacts\perf-fixtures\perf-100m-mountain-f32-deflate-tiled.tif"),
+    [string]$EvidenceDirectory = (Join-Path $PSScriptRoot "..\..\artifacts\perf-evidence"),
     [ValidateRange(1, 20)]
     [int]$Runs = 3,
     [ValidateRange(0, 1440)]
@@ -108,7 +108,7 @@ do {
     $focusScreenshot = Join-Path $runDirectory ("run-{0:D3}-focus.png" -f $runIndex)
     $arguments = @(
         "-NoProfile", "-ExecutionPolicy", "Bypass",
-        "-File", (Join-Path $PSScriptRoot "runtime-smoke.ps1"),
+        "-File", (Join-Path $PSScriptRoot "..\verify\runtime-smoke.ps1"),
         "-Executable", $resolvedExecutable,
         "-Fixture", $resolvedFixture,
         "-Screenshot", $screenshot,

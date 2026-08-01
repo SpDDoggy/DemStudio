@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+const html = await readFile(new URL("../../index.html", import.meta.url), "utf8");
 const babylonRuntime = await readFile(
-  new URL("../src/rendering/babylon-runtime.js", import.meta.url),
+  new URL("../../src/rendering/babylon-runtime.js", import.meta.url),
   "utf8",
 );
 

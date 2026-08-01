@@ -13,3 +13,10 @@ coverage/
 runtime-smoke.png
 .codex-build.*.log
 .bitfun/
+__pycache__/
+*.py[cod]
+/runtime-*/
+artifacts/**
+!artifacts/README.md
+!artifacts/manifests/
+!artifacts/manifests/**

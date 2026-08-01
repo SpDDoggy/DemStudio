@@ -1,10 +1,10 @@
 param(
-    [string]$TargetDirectory = (Join-Path $PSScriptRoot "..\src-tauri\target\perf")
+    [string]$TargetDirectory = (Join-Path $PSScriptRoot "..\..\src-tauri\target\perf")
 )
 
 $ErrorActionPreference = "Stop"
 $resolvedTarget = [System.IO.Path]::GetFullPath($TargetDirectory)
-$projectRoot = Split-Path -Parent $PSScriptRoot
+$projectRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $viteCli = Join-Path $projectRoot "node_modules\vite\bin\vite.js"
 $tauriCli = Join-Path $projectRoot "node_modules\@tauri-apps\cli\tauri.js"
 $previousTarget = $env:CARGO_TARGET_DIR
@@ -28,7 +28,7 @@ if (-not [System.IO.File]::Exists($executable)) {
     throw "Performance Release executable was not produced: $executable"
 }
 & powershell -NoProfile -ExecutionPolicy Bypass -File `
-    (Join-Path $PSScriptRoot "verify-release-exe.ps1") -ExePath $executable
+    (Join-Path $PSScriptRoot "..\verify\verify-release-exe.ps1") -ExePath $executable
 if ($LASTEXITCODE -ne 0) {
     throw "Performance Release EXE verification failed with exit code $LASTEXITCODE."
 }

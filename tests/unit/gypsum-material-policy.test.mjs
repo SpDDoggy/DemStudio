@@ -7,11 +7,11 @@ import {
   createGypsumMaterialPolicy,
   gypsumHeightMix,
   shouldUseCompatibilityPlanarShadow,
-} from "../src/gypsum-material-policy.js";
+} from "../../src/gypsum-material-policy.js";
 import {
   realtimePostProcessTopology,
   resolveRealtimePostProcessState,
-} from "../src/rendering/realtime-postprocess-policy.js";
+} from "../../src/rendering/realtime-postprocess-policy.js";
 
 test("gypsum material policy ignores legacy surface modes and disables textures", () => {
   for (const legacyMode of ["custom", "white", "relief", "height", "matcap"]) {

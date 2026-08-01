@@ -1,134 +1,134 @@
 import { readFile } from "node:fs/promises";
 
-const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
-const bridge = await readFile(new URL("../src/host-bridge.js", import.meta.url), "utf8");
+const html = await readFile(new URL("../../index.html", import.meta.url), "utf8");
+const bridge = await readFile(new URL("../../src/host-bridge.js", import.meta.url), "utf8");
 const tauriConfig = JSON.parse(
-  await readFile(new URL("../src-tauri/tauri.conf.json", import.meta.url), "utf8")
+  await readFile(new URL("../../src-tauri/tauri.conf.json", import.meta.url), "utf8")
 );
 const tauriDevConfig = JSON.parse(
-  await readFile(new URL("../src-tauri/tauri.dev.conf.json", import.meta.url), "utf8")
+  await readFile(new URL("../../src-tauri/tauri.dev.conf.json", import.meta.url), "utf8")
 );
 const packageJson = JSON.parse(
-  await readFile(new URL("../package.json", import.meta.url), "utf8")
+  await readFile(new URL("../../package.json", import.meta.url), "utf8")
 );
 const releaseExeVerifier = await readFile(
   new URL("./verify-release-exe.ps1", import.meta.url),
   "utf8"
 );
 const capability = JSON.parse(
-  await readFile(new URL("../src-tauri/capabilities/default.json", import.meta.url), "utf8")
+  await readFile(new URL("../../src-tauri/capabilities/default.json", import.meta.url), "utf8")
 );
-const tauriMain = await readFile(new URL("../src-tauri/src/main.rs", import.meta.url), "utf8");
-const tauriLib = await readFile(new URL("../src-tauri/src/lib.rs", import.meta.url), "utf8");
-const demCore = await readFile(new URL("../src-tauri/dem-core/src/lib.rs", import.meta.url), "utf8");
+const tauriMain = await readFile(new URL("../../src-tauri/src/main.rs", import.meta.url), "utf8");
+const tauriLib = await readFile(new URL("../../src-tauri/src/lib.rs", import.meta.url), "utf8");
+const demCore = await readFile(new URL("../../src-tauri/dem-core/src/lib.rs", import.meta.url), "utf8");
 const runtimeSmoke = await readFile(new URL("./runtime-smoke.ps1", import.meta.url), "utf8");
 const lightingProfile = await readFile(
-  new URL("../src/lighting-profile.js", import.meta.url),
+  new URL("../../src/lighting-profile.js", import.meta.url),
   "utf8"
 );
 const studioLightingRig = await readFile(
-  new URL("../src/studio-lighting-rig.js", import.meta.url),
+  new URL("../../src/studio-lighting-rig.js", import.meta.url),
   "utf8"
 );
 const studioEnvironment = await readFile(
-  new URL("../src/studio-environment.js", import.meta.url),
+  new URL("../../src/studio-environment.js", import.meta.url),
   "utf8"
 );
 const studioShadowFrustum = await readFile(
-  new URL("../src/studio-shadow-frustum.js", import.meta.url),
+  new URL("../../src/studio-shadow-frustum.js", import.meta.url),
   "utf8"
 );
 const terrainNormalLod = await readFile(
-  new URL("../src/terrain-normal-lod.js", import.meta.url),
+  new URL("../../src/terrain-normal-lod.js", import.meta.url),
   "utf8"
 );
 const gypsumMaterialPolicy = await readFile(
-  new URL("../src/gypsum-material-policy.js", import.meta.url),
+  new URL("../../src/gypsum-material-policy.js", import.meta.url),
   "utf8"
 );
 const gypsumBlackFrameBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-31-WEBGPU-GYPSUM-BLACK-FRAME.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-31-WEBGPU-GYPSUM-BLACK-FRAME.md", import.meta.url),
   "utf8"
 );
 const lightingControlsBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-31-LIGHTING-CONTROLS-NOT-PHYSICAL.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-31-LIGHTING-CONTROLS-NOT-PHYSICAL.md", import.meta.url),
   "utf8"
 );
 const contactOcclusionBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-31-SSAO-CONTACT-OCCLUSION-CONTRAST.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-31-SSAO-CONTACT-OCCLUSION-CONTRAST.md", import.meta.url),
   "utf8"
 );
 const codeAudit = await readFile(
-  new URL("../docs/product/CODE-AUDIT-2026-07-31.md", import.meta.url),
+  new URL("../../docs/product/CODE-AUDIT-2026-07-31.md", import.meta.url),
   "utf8"
 );
 const babylonRuntime = await readFile(
-  new URL("../src/rendering/babylon-runtime.js", import.meta.url),
+  new URL("../../src/rendering/babylon-runtime.js", import.meta.url),
   "utf8"
 );
 const realtimePostProcessPolicy = await readFile(
-  new URL("../src/rendering/realtime-postprocess-policy.js", import.meta.url),
+  new URL("../../src/rendering/realtime-postprocess-policy.js", import.meta.url),
   "utf8"
 );
 const babylonSceneKit = await readFile(
-  new URL("../src/rendering/babylon-scene-kit.js", import.meta.url),
+  new URL("../../src/rendering/babylon-scene-kit.js", import.meta.url),
   "utf8"
 );
 const babylonMaterialPlugin = await readFile(
-  new URL("../src/rendering/babylon-material-plugin.js", import.meta.url),
+  new URL("../../src/rendering/babylon-material-plugin.js", import.meta.url),
   "utf8"
 );
 const babylonEngineRegistration = await readFile(
-  new URL("../src/rendering/babylon-engine-registration.js", import.meta.url),
+  new URL("../../src/rendering/babylon-engine-registration.js", import.meta.url),
   "utf8"
 );
 const viteConfig = await readFile(
-  new URL("../vite.config.js", import.meta.url),
+  new URL("../../vite.config.js", import.meta.url),
   "utf8"
 );
 const terrainResidency = await readFile(
-  new URL("../src/rendering/terrain-residency.js", import.meta.url),
+  new URL("../../src/rendering/terrain-residency.js", import.meta.url),
   "utf8"
 );
 const realTifHarness = await readFile(new URL("./verify-frmm-real-tif.ps1", import.meta.url), "utf8");
 const synthetic307kPerf = await readFile(
-  new URL("./perf-synthetic-307k-foreground.ps1", import.meta.url),
+  new URL("../perf/perf-synthetic-307k-foreground.ps1", import.meta.url),
   "utf8"
 );
 const realInputPerformanceBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-29-REAL-INPUT-PERFORMANCE-FALSE-GREEN.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-29-REAL-INPUT-PERFORMANCE-FALSE-GREEN.md", import.meta.url),
   "utf8"
 );
 const geotiffTopologyBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-30-GEOTIFF-OVERVIEW-LOD-TOPOLOGY.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-30-GEOTIFF-OVERVIEW-LOD-TOPOLOGY.md", import.meta.url),
   "utf8"
 );
 const gridQualityBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-30-GRID-QUALITY-FALSE-ENTITLEMENT.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-30-GRID-QUALITY-FALSE-ENTITLEMENT.md", import.meta.url),
   "utf8"
 );
 const demSignalBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-30-DEM-SIGNAL-NORMAL-LIGHTING-COUPLING.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-30-DEM-SIGNAL-NORMAL-LIGHTING-COUPLING.md", import.meta.url),
   "utf8"
 );
 const webGpuFrameSubmissionBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-30-WEBGPU-ON-DEMAND-FRAME-SUBMISSION.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-30-WEBGPU-ON-DEMAND-FRAME-SUBMISSION.md", import.meta.url),
   "utf8"
 );
 const babylonCameraFeedbackBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-31-BABYLON-CAMERA-MATRIX-LOD-FEEDBACK.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-31-BABYLON-CAMERA-MATRIX-LOD-FEEDBACK.md", import.meta.url),
   "utf8"
 );
 const babylonVisualSemanticBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-31-BABYLON-VISUAL-SEMANTIC-DRIFT.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-31-BABYLON-VISUAL-SEMANTIC-DRIFT.md", import.meta.url),
   "utf8"
 );
 const baseTransitionBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-31-TIFF-BASE-LEVEL-TRANSITION-ORPHAN-MESHES.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-31-TIFF-BASE-LEVEL-TRANSITION-ORPHAN-MESHES.md", import.meta.url),
   "utf8"
 );
 const interactionHarnessAllocationBug = await readFile(
-  new URL("../docs/product/BUG-2026-07-31-INTERACTION-HARNESS-ALLOCATION-SPIKE.md", import.meta.url),
+  new URL("../../docs/product/BUG-2026-07-31-INTERACTION-HARNESS-ALLOCATION-SPIKE.md", import.meta.url),
   "utf8"
 );
 const runRenderFrameMatch = html.match(

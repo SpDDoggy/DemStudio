@@ -9,13 +9,13 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "desktop:dev": "tauri dev --config src-tauri/tauri.dev.conf.json",
-    "desktop:build": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-release-exe.ps1",
-    "desktop:build:exe": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-release-exe.ps1",
-    "desktop:build:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-release-exe.ps1 -BundleNsis",
+    "desktop:build": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build/build-release-exe.ps1",
+    "desktop:build:exe": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build/build-release-exe.ps1",
+    "desktop:build:windows": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build/build-release-exe.ps1 -BundleNsis",
     "desktop:build:smoke:windows": "tauri build --debug --no-bundle --config src-tauri/tauri.smoke.conf.json",
-    "verify": "node scripts/verify-baseline.mjs && node --test tests/terrain-lighting.test.mjs tests/terrain-geometry.test.mjs tests/terrain-residency.test.mjs tests/babylon-vertex-data.test.mjs tests/gypsum-material-policy.test.mjs tests/settings-form-contract.test.mjs tests/studio-environment.test.mjs tests/studio-shadow-frustum.test.mjs",
-    "verify:runtime:windows": "npm run desktop:build:smoke:windows && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/runtime-smoke.ps1",
-    "migrate:lens": "node scripts/migrate-lens-state.mjs"
+    "verify": "node scripts/verify/verify-baseline.mjs && node --test tests/unit/terrain-lighting.test.mjs tests/unit/terrain-geometry.test.mjs tests/unit/terrain-residency.test.mjs tests/unit/babylon-vertex-data.test.mjs tests/unit/gypsum-material-policy.test.mjs tests/contracts/settings-form-contract.test.mjs tests/unit/studio-environment.test.mjs tests/unit/studio-shadow-frustum.test.mjs",
+    "verify:runtime:windows": "npm run desktop:build:smoke:windows && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify/runtime-smoke.ps1",
+    "migrate:lens": "node scripts/migration/migrate-lens-state.mjs"
   },
   "dependencies": {
     "@babylonjs/core": "9.18.0",

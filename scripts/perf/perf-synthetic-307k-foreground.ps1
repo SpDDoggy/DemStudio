@@ -1,6 +1,6 @@
 param(
-    [string]$Executable = (Join-Path $PSScriptRoot "..\src-tauri\target\perf\release\dem-studio.exe"),
-    [string]$EvidenceDirectory = (Join-Path $PSScriptRoot "..\artifacts\perf-evidence-synthetic-307k"),
+    [string]$Executable = (Join-Path $PSScriptRoot "..\..\src-tauri\target\perf\release\dem-studio.exe"),
+    [string]$EvidenceDirectory = (Join-Path $PSScriptRoot "..\..\artifacts\perf-evidence-synthetic-307k"),
     [ValidateRange(1000, 60000)]
     [int]$DragMilliseconds = 8000,
     [ValidateRange(500, 10000)]

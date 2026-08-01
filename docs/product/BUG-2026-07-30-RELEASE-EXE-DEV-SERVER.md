@@ -45,8 +45,8 @@ http://127.0.0.1:1420
 ## 永久回归
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-release-exe.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-release-exe.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build/build-release-exe.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify/verify-release-exe.ps1
 ```
 
 任何生产 EXE 再次携带开发入口时，构建必须失败，不得交付。

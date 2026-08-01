@@ -11,7 +11,7 @@ const targetArgument = argument("--target");
 const force = process.argv.includes("--force");
 
 if (!sourceArgument || !targetArgument) {
-  console.error("Usage: node scripts/migrate-lens-state.mjs --source <Lens db.json> --target <Tauri store json> [--force]");
+  console.error("Usage: node scripts/migration/migrate-lens-state.mjs --source <Lens db.json> --target <Tauri store json> [--force]");
   process.exit(2);
 }
 
